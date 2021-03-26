@@ -1,0 +1,5 @@
+#
+time example $1 -l -u -h -s 256 -g 0.0001 -n 100 > $1-g0.0001.sp
+time example $1 -l -u -h -s 256 -g 0.001 -n 100 > $1-g0.001.sp
+time example $1 -l -u -h -s 256 -g 0.01 -n 100 > $1-g0.01.sp
+time example $1 -l -u -h -s 256 -g 0.1 -n 100 > $1-g0.1.sp

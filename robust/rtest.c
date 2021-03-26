@@ -1,0 +1,340 @@
+#include "test_func.h"
+#include "../kolmogorov-smirnov/ksmirnov.h"
+#include "../kolmogorov-smirnov/ks2.h"
+
+//typedef bool test_func(long double *value, unsigned long *hash, PRG gen, int *param, bool debug);
+
+extern unsigned long num_read [MAX_NUM_PRG];
+extern int num_PRG;
+extern test_function functions_list[];
+extern int len_func_list;
+
+long double *v; unsigned long int *h; // pointers to the arrays of values and hashes used in comparison
+int dimension; // number of values returned by each call to the test function
+int coord; // current coordinate to be processed [0..dimension-1]
+
+int lexcomp(long double v1, long double v2, unsigned long int h1, unsigned long int h2){
+  if (v1<v2) {return(-1);}
+  if (v1>v2) {return(1);}
+  // assert (v1==v2); // does not work, probably due to comparison of reals
+  if (h1 < h2){return(-1);}
+  if (h1 > h2){return(1);}
+  return(0);
+}
+
+int comp (const void *elem1, const void *elem2){
+  int ans=0;
+  int i=0; // number of compared elements
+  int ref1 = *((int*) elem1);
+  int ref2 = *((int*) elem2);
+  return(lexcomp(v[ref1*dimension+coord],v[ref2*dimension+coord],h[ref1],h[ref2]));
+}
+
+// parameters conventions:
+// param[0] number of values in the first sample (test generator)
+// param[1] number of values in the second sample (etalon generators)
+// func: how to compute a value/hash given the access to a generator
+// uses param[2..]; convention: param[2] is number of values produced by 
+//     the test function (the "dimension" of its output)
+// param[3] is some measure of a sample size if it makes sense for a test
+// (different test could measure it in different ways, so the interpretation
+// is test-dependent, and some could determine themselves how many data they
+// need and ignore this parameter)
+
+
+bool test_p_value(long double pvalue[], test_func f, PRG test, PRG etalon, int *param, 
+                   bool output, char *output1, char *output2, bool debug, bool ksexact){
+  int n0= param[0]; int n1= param[1];
+  dimension= param[2];
+  assert(dimension>0);
+  if (debug){printf("Test dimension: %d\n", dimension);}
+  long double value0[n0*dimension]; // each call to test function fills dimension 
+  long double value1[n1*dimension]; // consecutive positions in this array
+  unsigned long hash0[n0], hash1[n1]; // and one hash value (64 bits)
+  int ref0[n0], ref1[n1];
+
+  for (int i=0; i<n0; i++){
+    if (!f(&(value0[i*dimension]),&(hash0[i]),test,param,debug)){return(false);}
+  }
+  if(debug){printf("Test generator sampled\n");}
+  for (int i=0; i<n1; i++){
+    if (!f(&(value1[i*dimension]),&(hash1[i]),etalon,param,debug)){return(false);}
+  }
+  if(debug){printf("Etalon generator sampled\n");}
+  // values and hashes filled, now for each coordinate we compute p-value
+  // and put the result into p_value[0..dimension-1]
+  for (coord=0; coord<dimension; coord++){
+    if (debug){printf("Processing coordinate %d...\n",coord);}
+    v= value0; h= hash0;
+    for (int i=0; i<n0; i++){ref0[i]= i;}
+    qsort(ref0, n0, sizeof(int), comp);
+    v= value1; h= hash1;
+    for (int i=0; i<n1; i++){ref1[i]= i;}
+    qsort(ref1, n1, sizeof(int), comp);
+    // both arrays are sorted
+    if (debug) {
+      printf("First array:\n");
+      for (int i=0; i<n0; i++){
+        printf("[ %20Lf, ",value0[ref0[i]*dimension+coord]);
+        print64(hash0[ref0[i]]);
+        printf("]\n");
+      }
+      printf("Second array:\n");
+      for (int i=0; i<n1; i++){
+        printf("[ %20Lf, ",value1[ref1[i]*dimension+coord]);
+        print64(hash1[ref1[i]]);
+        printf("]\n");
+      }
+    }  
+    if (output){
+      // For each coordinate create two files named output1.coordinate, output2.coordinate:
+      char filetest[512], fileetal[512];
+      FILE *outtest, *outetal;
+      strncpy(filetest,output1,256);
+      strncpy(fileetal,output2,256);
+      char coord_str[8];
+      sprintf(coord_str, ".%04d", coord); 
+      strncat(filetest,coord_str,6); strncat(fileetal,coord_str,6);  
+      if (debug){
+        printf("Output file names: [%s] and [%s]\n",filetest,fileetal);
+      }
+      // output values (without hashes for now) to these files:
+      outtest= fopen(filetest, "w"); outetal= fopen(fileetal,"w");
+      for (int i=0; i<n0; i++){
+        fprintf(outtest, "%20.10Lf\n", value0[ref0[i]*dimension+coord]);
+      }  
+      for (int i=0; i<n1; i++){
+        fprintf(outetal, "%20.10Lf\n", value1[ref1[i]*dimension+coord]);
+      }        
+      fclose(outtest); fclose(outetal);
+    }
+    
+    bool kstring[n0+n1]; // source of ith bits (0/1 if from ref0/ref1 array)
+    int pos0= 0;
+    int pos1= 0;
+    // pos0 and pos1 elements are "merged" in ref0/ref1
+    while (pos0+pos1<n0+n1){//there are still elements to merge
+      if (pos0==n0){ // ref0 exhausted 
+        assert(pos1<n1);
+        kstring[pos0+pos1]= true; pos1++;
+      } else if (pos1==n1){ // ref1 exhausted 
+        assert(pos0<n0);
+        kstring[pos0+pos1]= false; pos0++;
+      } else {
+        assert(pos0<n0); assert(pos1<n1);
+        if (debug){printf("Comparing: <%Lf,%ld>?<%Lf, %ld>\n", value0[ref0[pos0]*dimension+coord], hash0[ref0[pos0]], 
+                                  value1[ref1[pos1]*dimension+coord], hash1[ref1[pos1]]);}
+        int cmp= lexcomp(value0[ref0[pos0]*dimension+coord],value1[ref1[pos1]*dimension+coord],hash0[ref0[pos0]],hash1[ref1[pos1]]);
+        if (cmp<0){kstring[pos0+pos1]= false; pos0++;}
+        if (cmp==0){
+          fprintf(stderr, "Warning: unresolved tie\n");   
+          kstring[pos0+pos1]= false; pos0++;
+        }        
+        if (cmp>0){kstring[pos0+pos1]= true; pos1++;}
+      }
+    }  
+    if (debug){
+      printf("KS string: ");
+      for (int i=0; i<n0+n1; i++){
+        printf("%d",kstring[i]);
+      }        
+      printf("\n");      
+    }        
+    // computing deviation
+    long pref= 0;
+    long max_dev= 0;
+    long k0=0;
+    long k1=0;
+    // max_dev = n0*n1*(maximal deviation for prefixes up to length pref)
+    // k0, k1 = number of let[0], let[1] among first pref letters
+    while (pref!=n0+n1){
+      if (kstring[pref]){
+        k1++;
+      }else{
+        k0++;
+      }  
+      pref++;
+      if (abs(k0*n1-k1*n0)>max_dev){max_dev=abs(k0*n1-k1*n0);}
+    }
+    long double deviation=(double)max_dev/(((double)n0)*((double)n1));
+    if (debug){printf("Maximal deviation on coordinate %d: %Lf\n",coord, deviation);}  
+    long double ksval;
+    if (ksexact){
+      ksval= ks2bar(n0,n1,max_dev); // exact computation
+    }else{
+      ksval =1-psmirnov2x(deviation, n0, n1); // with long double numbers
+    }  
+    if (debug){printf("KSvalue on coordinate %d: %20.15Lf\n",coord,ksval);}
+    pvalue[coord]= ksval;
+  }
+  return(true);
+}
+
+#define NUM_PARAM 10
+int parameters[NUM_PARAM];
+
+#define MAX_SAMPLE_SIZE
+
+void usageif(bool x, char* progname){
+  if (x){
+    fprintf(stderr, "Usage: %s [-k -r -x -v] -d dimension -f file -e etalon -p num_samples_file -q num_samples_etalon -t test_number -n num_tested -o output_directory \n", progname);
+    exit(1);
+  }
+}
+
+int main(int argc, char *argv[]){
+  bool ok;
+  byte next;
+  int opt;
+  bool use_xor= false;
+  char *tested, *etalon;
+  bool tested_specified= false;
+  bool etalon_specified= false;
+  char *output_directory;
+  bool output= false;
+  bool debug= false;
+  bool ksexact= false;
+  int n0,n1; // sample sizes for 2-sample KS-testing
+  int num_func= -1; // no default test function
+  int dimension= 1; // number of values returned by the test, 1 by default
+  int repetitions= 1; // number of repetitions requested, 0 means "as much as data allow"
+  int num_tested= 0;
+  // DEBUG printf("Number of possible test functions: %d\n", len_func_list);
+  while ((opt = getopt(argc, argv, "kvxr:o:n:d:f:e:p:q:t:")) != -1) {
+    switch (opt) {
+      case 'k':
+        ksexact= true;
+        break;
+      case 'v':
+        debug= true;
+        break;
+      case 'x':
+        use_xor = true;
+        break;
+      case 'o':
+        output= true;
+        output_directory= optarg;
+        break;
+      case 'd':
+        dimension=atoi(optarg);  
+        break;
+      case 'n':
+        num_tested=atoi(optarg);
+        break;  
+      case 'r':
+        repetitions= atoi(optarg);
+        break;        
+      case 'f':
+        tested= optarg;
+        tested_specified= true;
+        break;
+      case 'e':
+        etalon= optarg;
+        etalon_specified= true;
+        break;        
+      case 'p':
+        n0= atoi(optarg);
+        break;
+      case 'q':
+        n1= atoi(optarg);    
+        break;
+      case 't':
+        num_func= atoi(optarg); 
+        break; 
+      default: /* '?' */
+        usageif(true,argv[0]);
+    }
+  }  
+  usageif((optind!=argc)||(n0<=0)||(n1<=0)||(!tested_specified)||(!etalon_specified)||(num_func<0), argv[0]);
+#define SAMPLE_SIZE_BOUND 10000
+  if ((n0>SAMPLE_SIZE_BOUND)||(n1>SAMPLE_SIZE_BOUND)){    
+    fprintf(stderr,"Too big sample size in, check -p/-q option arguments\n"); 
+    exit(1); 
+  }
+  if (repetitions<0){
+    fprintf(stderr,"Number of repetitions [-r argument] should be non-negative\n"); 
+    exit(1);
+  }
+  if (num_func>=len_func_list){
+    fprintf(stderr,"Test function with this number does not exist\n");
+    exit(1);
+  }
+  if (output){
+    if (mkdir(output_directory,0755)!=0){
+      fprintf(stderr,"Output directory requested but cannot be created\n");
+      exit(1);
+    }
+    // output directory created 
+  }
+  PRG test;
+  ok=g_create_file(&test, tested);
+  if (!ok){fprintf (stderr, "File for testing [-f] not found\n"); exit(1);}
+  if (debug){printf("PRG test generator = %d\n", test);}
+
+  PRG etal;
+  ok= g_create_file(&etal, etalon);
+  if (!ok){fprintf (stderr, "Etalon file [-e] not found\n"); exit(1);}
+  if (debug){printf("PRG etalon generator = %d\n", etal);}
+
+  PRG compare_etalon;
+  if (use_xor){
+    ok=g_create_xor(&compare_etalon, test, etal);
+    if (!ok){fprintf (stderr, "Internal error: XOR generator not created\n");}
+  }else{
+    compare_etalon= etal;
+  }  
+  if (debug){printf("PRG generator for comparison = %d\n", compare_etalon);sleep(5);}
+  // generators test and compared are ready
+  
+  parameters[0]= n0;
+  parameters[1]= n1;
+  parameters[2]= dimension;
+  parameters[3]= num_tested; // temporary for testing - should be replace by additional option parameter
+  if (debug&&!use_xor){
+     printf("Comparing files %s and %s\n", tested, etalon);
+  }
+  if (debug&&use_xor){
+     printf("Comparing files %s and (%s xor %s)\n", tested, tested, etalon);
+  }
+  if (debug){
+    printf("using samples of size %d and %d respectively\n", n0,n1);
+    printf("Test function used: %s\n", functions_list[num_func].description);
+    printf("Dimension (number of returned values): %d\n", dimension);
+    printf("Test size: %d\n", num_tested);
+  }
+  ok=true;
+  int filecount= 0;
+  char output1[256], output2[256]; // we create filenames and they are not long
+  while(ok){
+    long double p[dimension];
+    if (output){
+      // create filenames for p-values from the tested and etalon files
+      assert(strlen(output_directory)<128);
+      strncpy(output1,output_directory,128);
+      strncpy(output2,output_directory,128);
+      strncat(output1,"/",2); strncat(output2,"/",2);
+      char ordnum[64];
+      sprintf(ordnum, "%06d", filecount);
+      filecount++;
+      strncat(output1,ordnum,64); strncat(output2,ordnum,64);
+      strncat(output1,".test",7); strncat(output2,".etal",7);
+      if (debug){
+        printf("Output files: [%s] and [%s]\n", output1, output2);
+      }
+    }  
+    ok= test_p_value (p, functions_list[num_func].reference, test, compare_etalon, parameters, output, output1, output2, debug, ksexact);
+    if (ok){
+      for(int i=0; i<dimension; i++){
+        printf("%15.13Lf ",p[i]);
+        if ((i+1)%5==0){printf("\n");}
+      }
+      printf("\n"); 
+      if (repetitions==1) {ok= false;}
+      if (repetitions>1)  {repetitions--;} 
+      // if repetitions==0, it is unchanged, so data are tested as long as possible
+    }
+    if (true){printf("Used %lu bytes from the test generator [%d]\n", g_num_read(test), test);}
+    if (true){printf("Used %lu bytes from the etalon generator [%d]\n", g_num_read(etal), etal);}
+  }
+  exit(0);
+}

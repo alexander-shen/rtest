@@ -1,0 +1,21 @@
+To draw pictures on Xwindows we create two processes: parent (that generates the point to be drawn) and child (that takes care for actual drawing), connected by a pipe. The child gets points from the pipe and draws them when they are ready. The parent fills the pipe (and is blocked when the pipe is full). From the programmer's viewpoint, parent just draws the points when it wants.
+
+How to achieve this: 
+
+1) add #include "graph_pipe.h" to your code
+
+2) instead of main(argc, argv) use main_graph(argc,argv);
+
+3) WIN_WIDTH and WIN_HEIGHT are window width and height (read-only)
+
+4) use graph_draw(int x, int y) to draw a point at x,y in [0,WIN_WIDTH)*[0,WIN_HEIGHT)
+
+5) or use graph_draw_line(int x, int y, int nx, int ny) to draw a line between 
+   two points (x,y) and (nx,ny); both should be inside the window
+
+6) use graph_end() to finish drawing [probably useless, but let it be]
+
+7) at any moment one could select the color (from small list of predefined colors)...
+
+8) for compilation use gcc graph_pipe.c [your modules] -lglut -lGL -lGLU
+

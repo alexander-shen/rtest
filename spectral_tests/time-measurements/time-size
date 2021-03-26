@@ -1,0 +1,12 @@
+#
+
+time example $1 -l -u -h -s 128 -g 0.001 -n 100 > $1-s128.sp
+time example $1 -l -u -h -s 256 -g 0.001 -n 100 > $1-s256.sp
+time example $1 -l -u -h -s 512 -g 0.001 -n 100 > $1-s512.sp
+time example $1 -l -u -h -s 1024 -g 0.001 -n 100 > $1-s1024.sp
+time example $1 -l -u -h -s 2048 -g 0.001 -n 100 > $1-s2048.sp
+time example $1 -l -u -h -s 4096 -g 0.001 -n 100 > $1-s4096.sp
+time example $1 -l -u -h -s 8192 -g 0.001 -n 100 > $1-s8192.sp
+time example $1 -l -u -h -s 16384 -g 0.001 -n 100 > $1-s16384.sp
+time example $1 -l -u -h -s 32768 -g 0.001 -n 100 > $1-s32768.sp
+time example $1 -l -u -h -s 65536 -g 0.001 -n 100 > $1-s65536.sp

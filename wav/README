@@ -1,0 +1,4 @@
+Reading wav files up to 32 bits per sample
+(two functions for mono and for stereo file)
+
++ test function
