@@ -1,0 +1,3 @@
+data.e: file that contains binary digits of e in ASCII (provided as a test material with NIST suite)
+data.e.32: bits of this file converted in binary format (sequence of 32 lsb integers)
+tobinary.c: the conversion program
