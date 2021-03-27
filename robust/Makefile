@@ -12,7 +12,7 @@ CC = g++
 
 # scripts
 
-SCRIPTS = rtest1m.sh rtest10m.sh rtest100m.sh rtest1g.sh
+SCRIPTS = rtest1m.sh rtest10m.sh rtest100m.sh rtest1g.sh rtest10g.sh
 
 # different tests implemented in several files
 TESTS_C = test_func.c test_opso.c test_oqso.c test_sts_serial.c test_bytedistrib.c test_runs.c test_sums.c test_ent.c test_lz.c test_fft.c test_rank.c test_bitstream.c test_birthday.c
