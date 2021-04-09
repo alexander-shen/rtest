@@ -66,7 +66,8 @@ unsigned int linear(byte x, byte y, byte z, byte t){
   return ((((((xx<<5)|yy)<<5)|zz)<<5)|tt);
 }
 
-bool oqso (long double *value, unsigned long *hash, PRG gen, int *param, bool debug){
+bool oqso (long double *value, unsigned long *hash, PRG gen,
+           int *param, double *real_param, bool debug){
   assert (param[2]==28); // dimension is fixed to be 23
   assert (param[3]==NINTS); // number of read integers should be 2^{23}+1
   // the number of read integer could be changed easily if we do not use the distribution

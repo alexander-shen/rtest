@@ -82,7 +82,8 @@ static double b[6] = {
 
 // The same is done for nonincreasing sequences, so the test returns two values
 
-bool knuth_runs (long double * value, unsigned long * hash, PRG gen, int * param, bool debug){
+bool knuth_runs (long double *value, unsigned long *hash, PRG gen, 
+                 int *param, double *real_param, bool debug){
   assert(param[2]==2);
   long int n= param[3];
   assert(n>=1); // n should be reasonably large, diehard used n=10000   

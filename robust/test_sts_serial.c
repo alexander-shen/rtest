@@ -38,7 +38,8 @@
 #include "test_func.h"
 #include <gsl/gsl_math.h>
 
-bool sts_serial (long double *value, unsigned long *hash, PRG gen, int *param, bool debug){
+bool sts_serial (long double *value, unsigned long *hash, PRG gen,
+                 int *param, double *real_param, bool debug){
   int m= param[2]/3; // we need space to return 3m values (raw and processed)
   assert ((m>0)&&(m<32));
   assert (sizeof(int)>=4); assert(sizeof(long)>=8); // let us check here, too...

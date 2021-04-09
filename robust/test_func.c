@@ -33,7 +33,8 @@ test_function functions_list[]={
 int len_func_list=sizeof(functions_list)/sizeof(test_function);
 
 // For testing 
-bool dummy_dimension(long double *value, unsigned long *hash, PRG gen, int *param, bool debug){
+bool dummy_dimension(long double *value, unsigned long *hash, PRG gen, 
+                     int *param, double *real_param, bool debug){
   static int count=0;
   for (int i=0; i<param[2]; i++){ // dimension=param[2] according to conventions
     value[i]=(long double)count+i*0.01;       
@@ -43,7 +44,8 @@ bool dummy_dimension(long double *value, unsigned long *hash, PRG gen, int *para
   return(true);
 }
 
-bool all_bytes (long double *value, unsigned long *hash, PRG gen, int *param, bool debug){
+bool all_bytes (long double *value, unsigned long *hash, PRG gen,
+                int *param, double *real_param, bool debug){
   assert (param[2]==1); // this function returns one value
 #define NUM_BYTES 256  
   bool occur[NUM_BYTES];
@@ -70,7 +72,8 @@ bool all_bytes (long double *value, unsigned long *hash, PRG gen, int *param, bo
 }
 
 // how many 16-bit integers needed to see all 2^{16} values
-bool all_16 (long double *value, unsigned long *hash, PRG gen, int *param, bool debug){
+bool all_16 (long double *value, unsigned long *hash, PRG gen,
+             int *param, double *real_param, bool debug){
   assert (param[2]==1); // this function returns one value
 #define NUM_16 65536  
   bool occur[NUM_16];

@@ -77,7 +77,8 @@ unsigned int cshift(unsigned int u, unsigned int s){
 
 //#define COUNT_UNIQUE // as it is done in dieharder (but not diehard c code in die.c)
 
-bool birthdays (long double *value, unsigned long *hash, PRG gen, int *param, bool debug){
+bool birthdays (long double *value, unsigned long *hash, PRG gen, 
+                int *param, double *real_param, bool debug){
   assert(param[2]==32);
   long slen= param[3]; // sample size, was 500 in the original test
   // The recommended rule of thumb for chi-square testing is to combine small probabilities

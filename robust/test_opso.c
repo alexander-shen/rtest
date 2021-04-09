@@ -57,7 +57,8 @@ Monkey tests for random numbers, Computers. Math. Applic. 26(9),1-10 (1993) */
 #include <gsl/gsl_math.h>
 
 
-bool opso (long double *value, unsigned long *hash, PRG gen, int *param, bool debug){
+bool opso (long double *value, unsigned long *hash, PRG gen,
+           int *param, double *real_param, bool debug){
   assert (param[2]==23); // dimension is fixed to be 23
   assert (param[3]==NINTS); // number of read integers should be 2^{23}+1
   // the number of read integer could be changed easily if we do not use the distribution

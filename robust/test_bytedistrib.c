@@ -52,7 +52,8 @@ void extract_bytes(unsigned int i, byte *b1, byte *b2, byte *b3){
 }
 
 
-bool bytedistrib(long double *value, unsigned long *hash, PRG gen, int *param, bool debug){
+bool bytedistrib(long double *value, unsigned long *hash, PRG gen, 
+                 int *param, double *real_param, bool debug){
 
   assert(param[2]==1); // test returns one value
   unsigned long n= param[3]; // number of trials; test uses 3*n 32-bit integers

@@ -6,7 +6,8 @@
 
 #include "test_func.h"
 
-bool ent_8_16 (long double *value, unsigned long *hash, PRG gen, int *param, bool debug){
+bool ent_8_16 (long double *value, unsigned long *hash, PRG gen, 
+               int *param, double *real_param, bool debug){
   assert (param[2]==4); // returns ent8, ent16, chisquare8, chisquare 16
   long n= param[3]; // number of 32-bit ints that should be analyzed
   assert (n>0);

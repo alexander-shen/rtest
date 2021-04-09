@@ -24,7 +24,8 @@
 #define REAL(z,i) ((z)[2*(i)])
 #define IMAG(z,i) ((z)[2*(i)+1])
 
-bool fftest (long double *value, unsigned long *hash, PRG gen, int *param, bool debug){
+bool fftest (long double *value, unsigned long *hash, PRG gen,
+             int *param, double *real_param, bool debug){
   assert (param[2]==1); // only one value is produced by the test
   long m = param[3]; // uses m ints = 32m bits; m should be power of 2
   unsigned int p= m;                 

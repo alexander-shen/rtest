@@ -78,7 +78,8 @@ int rank(row *m, int w, int h){
 // given n=param[3], reads 32*n 32-bit unsigned integers and computes n binary ranks 
 // 32*32 matrices. Counts the fraction of matrices with ranks 32, 31, 30, 29-
 // and compares with the theoretical probabilities using chi-square test
-bool rank32x32 (long double *value, unsigned long *hash, PRG gen, int *param, bool debug){
+bool rank32x32 (long double *value, unsigned long *hash, PRG gen, 
+                int *param, double *real_param, bool debug){
   assert (param[2]==1);
   long n=param[3];
   assert (n>0);
@@ -120,7 +121,8 @@ bool rank32x32 (long double *value, unsigned long *hash, PRG gen, int *param, bo
   return(true);
 }
 
-bool rank6x8 (long double *value, unsigned long *hash, PRG gen, int *param, bool debug){
+bool rank6x8 (long double *value, unsigned long *hash, PRG gen,
+              int *param, double *real_param, bool debug){
   assert(param[2]==25); // dimension is 25
   long n= param[3]; // number of 6x8 matrices for each position (the total number is 25*n
   long count[25][3]; // as Marsaglia recommends, we count ranks <=4, 5, 6

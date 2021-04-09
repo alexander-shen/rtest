@@ -33,7 +33,8 @@ are 2^21 INDEPENDENT samples.
 // Since the overlapped and non-overlapped versions use different 
 // number of input integers, we make two separate functions
 
-bool bitstream_o (long double *value, unsigned long *hash, PRG gen, int *param, bool debug){
+bool bitstream_o (long double *value, unsigned long *hash, PRG gen, 
+                  int *param, double *real_param, bool debug){
   assert (param[2]==1); 
   assert (param[3]==(1<<21)+19);
   unsigned int word= 0; // only 20 last bits are used
@@ -89,7 +90,8 @@ bool bitstream_o (long double *value, unsigned long *hash, PRG gen, int *param, 
 
 #define WLEN 20 // should not be changed (and should be less than 32 if changed)
 
-bool bitstream_n (long double *value, unsigned long *hash, PRG gen, int *param, bool debug){
+bool bitstream_n (long double *value, unsigned long *hash, PRG gen,
+                  int *param, double *real_param, bool debug){
   assert (param[2]==1); 
   assert (param[3]==(1<<21)*20);
   bool *bitset; // array of size 2^20 allocated for counters

@@ -10,7 +10,8 @@
 
 #include "test_func.h"
 
-bool lz_split (long double *value, unsigned long *hash, PRG gen, int *param, bool debug){
+bool lz_split (long double *value, unsigned long *hash, PRG gen,
+               int *param, double *real_param, bool debug){
   assert (param[2]==1); // test dimension is 1 (the number of words returned)
   long m= param[3]; // the number of integers used; NIST uses 10^6 bits (31250 ints)
   		   // and the conversion parameters are valid only for this number

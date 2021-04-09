@@ -80,7 +80,8 @@ int cmpdbl(const void *a, const void *b){
 }
 
 
-bool osums (long double *value, unsigned long *hash, PRG gen, int *param, bool debug){
+bool osums (long double *value, unsigned long *hash, PRG gen,
+            int *param, double *real_param, bool debug){
   assert (param[2]==1); // only one value is produced by the test
   int m = param[3]; // number of terms in the sum and the number of sums
                     // uses 2m-1 calls to the generator
