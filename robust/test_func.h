@@ -83,3 +83,7 @@ bool lz_split (long double *value, unsigned long *hash, PRG gen, int *param, boo
 
 bool birthdays (long double *value, unsigned long *hash, PRG gen, int *param, bool debug);
 //16 diehard/dieharder birthday test
+
+bool mindist2d (long double *value, unsigned long *hash, PRG gen, int *param, bool debug);
+//17 diehard/dieharder birthday test
+

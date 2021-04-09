@@ -101,10 +101,10 @@ bool test_p_value(long double pvalue[], test_func f, PRG test, PRG etalon, int *
       // output values (without hashes for now) to these files:
       outtest= fopen(filetest, "w"); outetal= fopen(fileetal,"w");
       for (int i=0; i<n0; i++){
-        fprintf(outtest, "%20.10Lf\n", value0[ref0[i]*dimension+coord]);
+        fprintf(outtest, "%20.18Lf\n", value0[ref0[i]*dimension+coord]);
       }  
       for (int i=0; i<n1; i++){
-        fprintf(outetal, "%20.10Lf\n", value1[ref1[i]*dimension+coord]);
+        fprintf(outetal, "%20.18Lf\n", value1[ref1[i]*dimension+coord]);
       }        
       fclose(outtest); fclose(outetal);
     }
@@ -177,7 +177,7 @@ int parameters[NUM_PARAM];
 
 void usageif(bool x, char* progname){
   if (x){
-    fprintf(stderr, "Usage: %s [-k -r -x -v] -d dimension -f file -e etalon -p num_samples_file -q num_samples_etalon -t test_number -n num_tested -o output_directory \n", progname);
+    fprintf(stderr, "Usage: %s [-k -r -x -v] -d dimension -f file -e etalon -p num_samples_file -q num_samples_etalon -t test_number -m modifier -n num_tested -o output_directory \n", progname);
     exit(1);
   }
 }
@@ -199,8 +199,9 @@ int main(int argc, char *argv[]){
   int dimension= 1; // number of values returned by the test, 1 by default
   int repetitions= 1; // number of repetitions requested, 0 means "as much as data allow"
   int num_tested= 0;
+  int modifier= 0;
   // DEBUG printf("Number of possible test functions: %d\n", len_func_list);
-  while ((opt = getopt(argc, argv, "kvxr:o:n:d:f:e:p:q:t:")) != -1) {
+  while ((opt = getopt(argc, argv, "kvxr:o:n:d:f:e:p:q:t:m:")) != -1) {
     switch (opt) {
       case 'k':
         ksexact= true;
@@ -241,6 +242,8 @@ int main(int argc, char *argv[]){
       case 't':
         num_func= atoi(optarg); 
         break; 
+      case 'm':
+        modifier= atoi(optarg);  
       default: /* '?' */
         usageif(true,argv[0]);
     }
@@ -289,7 +292,7 @@ int main(int argc, char *argv[]){
   parameters[0]= n0;
   parameters[1]= n1;
   parameters[2]= dimension;
-  parameters[3]= num_tested; // temporary for testing - should be replace by additional option parameter
+  parameters[3]= modifier; 
   if (debug&&!use_xor){
      printf("Comparing files %s and %s\n", tested, etalon);
   }
@@ -325,7 +328,7 @@ int main(int argc, char *argv[]){
     ok= test_p_value (p, functions_list[num_func].reference, test, compare_etalon, parameters, output, output1, output2, debug, ksexact);
     if (ok){
       for(int i=0; i<dimension; i++){
-        printf("%15.13Lf ",p[i]);
+        printf("%20.18Lf ",p[i]);
         if ((i+1)%5==0){printf("\n");}
       }
       printf("\n"); 
