@@ -2,7 +2,7 @@
 #include "../kolmogorov-smirnov/ksmirnov.h"
 #include "../kolmogorov-smirnov/ks2.h"
 
-//typedef bool test_func(long double *value, unsigned long *hash, PRG gen, int *param, bool debug);
+//typedef bool test_func(long double *value, unsigned long *hash, PRG gen, int *param, double *real_param, bool debug);
 
 extern unsigned long num_read [MAX_NUM_PRG];
 extern int num_PRG;
