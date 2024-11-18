@@ -29,8 +29,15 @@ FLAGS = -I /usr/local/include -L /usr/local/bin/ -lgsl -lgslcblas -lm -lgmp
 rtest: rtest.c test_func.h $(TESTS_C) generators.c generators.h $(KS_HEADERS) $(KS_C) ../general/general.c ../general/general.h; \
 $(CC) -o rtest rtest.c $(TESTS_C) generators.c $(KS_C) ../general/general.c $(FLAGS)
 
+test-generators: test-generators.c generators.c generators.h; \
+   gcc -o test-generators test-generators.c generators.c;
+   
+test-generators-run: test-generators;\
+   ./test-generators > tmp.out; diff test-generators.out tmp.out;\
+   echo "No diff output means OK"
+   
 clean: ; \
-rm *~ *.o a.out rtest
+rm *~ *.o a.out rtest test-generators tmp.out; exit 0;
 
 install: rtest; \
 sudo cp rtest $(SCRIPTS) /usr/local/bin/

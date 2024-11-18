@@ -51,7 +51,7 @@ bool bitstream_o (long double *value, unsigned long *hash, PRG gen,
   // bitset is empty 
   for (int i=0; i<20; i++){
     bool b;
-    if (!getbit(&b, gen)){free(bitset); return(false);}
+    if (!g_getbit(&b, gen)){free(bitset); return(false);}
     word=(word<<1)|b;   
   }
   assert (word<(1<<20));
@@ -61,7 +61,7 @@ bool bitstream_o (long double *value, unsigned long *hash, PRG gen,
   while (reg!=(1<<21)){
     // get and register next word
     bool b;
-    if (!getbit(&b, gen)){free(bitset); return(false);}
+    if (!g_getbit(&b, gen)){free(bitset); return(false);}
     word=((word<<1)|b)&mask;
     assert (word<(1<<20));
     bitset[word]= true;
@@ -108,7 +108,7 @@ bool bitstream_n (long double *value, unsigned long *hash, PRG gen,
   while (reg!=(1<<21)){
     // get and register next word
     unsigned word;
-    if (!getword(&word,WLEN,gen)){free(bitset); return (false);}
+    if (!g_getword(&word,WLEN,gen)){free(bitset); return (false);}
     bitset[word]= true;
     reg++;
   }

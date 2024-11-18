@@ -32,7 +32,7 @@ bool lz_split (long double *value, unsigned long *hash, PRG gen,
   bool free_space= true;
   while ((processed != n)&&free_space){
     bool b;
-    if (!getbit(&b,gen)){return(false);}
+    if (!g_getbit(&b,gen)){return(false);}
     // new bit is read
     if (sons[curvert][b]!=nil){ // next bit still keeps us in the tree
       curvert=sons[curvert][b];

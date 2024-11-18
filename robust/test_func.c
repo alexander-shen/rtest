@@ -1,12 +1,6 @@
 #include "test_func.h"
 
-// This file contains a collection of different test functions, 
-// all having type test_func (defined in rtest.h)
-// They are completely independent 
-// More test functions are defined in separate files, but
-// they have to be included in the list below
-
-// how many bytes needed to see all 256 values
+// List of all test functions (see test_func.h about their type)
 
 // Here one should provide references to all test functions and their short descriptions
 test_function functions_list[]={
@@ -32,6 +26,7 @@ test_function functions_list[]={
 
 int len_func_list=sizeof(functions_list)/sizeof(test_function);
 
+
 // For testing 
 bool dummy_dimension(long double *value, unsigned long *hash, PRG gen, 
                      int *param, double *real_param, bool debug){
@@ -44,6 +39,7 @@ bool dummy_dimension(long double *value, unsigned long *hash, PRG gen,
   return(true);
 }
 
+// how many bytes needed to see all 256 values
 bool all_bytes (long double *value, unsigned long *hash, PRG gen,
                 int *param, double *real_param, bool debug){
   assert (param[2]==1); // this function returns one value
