@@ -45,7 +45,7 @@
 #define BYTES_PER_STEP 9 // = BYTES_PER_INT*INTS_PER_STEP
 #define NDF (255*9) // number of degrees of freedom
 
-void extract_bytes(unsigned int i, byte *b1, byte *b2, byte *b3){
+void extract_bytes(unsigned int i, byt *b1, byt *b2, byt *b3){
   *b1= i%256;
   *b2= (i>>12)%256;
   *b3= i>>24;   
@@ -74,7 +74,7 @@ bool bytedistrib(long double *value, unsigned long *hash, PRG gen,
       unsigned int curr;
       if (!g_int32_lsb(&curr,gen)){return(false);}
       // extract three bytes from the int:
-      byte b1, b2, b3;
+      byt b1, b2, b3;
       extract_bytes(curr, &b1,&b2,&b3);      
       // increase the corresponding counters:
       count[numint*BYTES_PER_INT][b1]++;

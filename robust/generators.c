@@ -112,14 +112,14 @@ bool g_create_xor (PRG *new_generator, PRG gen1, PRG gen2){
 // test/generators that deal with individual bits
 
 // *b= the next byte from generator with label gen
-bool g_byte (byte *b, PRG gen){
+bool g_byte (byt *b, PRG gen){
   assert (gen>=0); assert (gen<num_PRG);
   int type= gen_type[gen];
   switch(type){
     case GEN_FILE: {
       int c= getc(source_files[gen]);
       if (c==EOF){printf("oops, eof in generator %d\n", gen); return (false);}
-      *b = (byte) c;
+      *b = (byt) c;
       num_read[gen]++;
       return (true);
     } break;
@@ -130,17 +130,17 @@ bool g_byte (byte *b, PRG gen){
         state[gen]= state[gen]+1; // or any other iterative generator
       }
       assert(num_buf[gen]>0);
-      *b = (byte) (buf[gen]%256);
+      *b = (byt) (buf[gen]%256);
       buf[gen]/= 256;
       num_buf[gen]--;
       num_read[gen]++;
       return(true);
     } break;
     case GEN_XOR: {
-      byte b1,b2;
+      byt b1,b2;
       if (!g_byte(&b1,arg1[gen])) {printf("oops XOR in arg1 %d\n",gen); return(false);}
       if (!g_byte(&b2,arg2[gen])) {printf("oops XOR in arg2 %d\n",gen); return(false);}
-      *b= (byte) b1^b2;
+      *b= (byt) b1^b2;
       num_read[gen]++;
       return(true);
     } break;
@@ -153,7 +153,7 @@ bool g_byte (byte *b, PRG gen){
 
 // *i= 32-bit integer from input stream of generator gen (first byte + 256*second byte+...)
 bool g_int32_lsb(unsigned int *i, PRG gen){
-  byte b[4];
+  byt b[4];
   for (int j=0; j<4; j++){
     if (!g_byte(&(b[j]),gen)) {printf("oops... no byte from gen %d\n", gen); return(false);} 
   }
@@ -166,7 +166,7 @@ bool g_int32_lsb(unsigned int *i, PRG gen){
 
 // *i= 16-bit integer from input stream of generator gen (first byte + 256*second byte)
 bool g_int16_lsb(unsigned int *i, PRG gen){
-  byte b[2];
+  byt b[2];
   for (int j=0; j<2; j++){
     if (!g_byte(&(b[j]),gen)) {return(false);} 
   }

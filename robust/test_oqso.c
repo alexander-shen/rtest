@@ -56,7 +56,7 @@ Monkey tests for random numbers, Computers. Math. Applic. 26(9),1-10 (1993) */
 #include <gsl/gsl_math.h>
 
 // transfrom coordinates in 32*32*32*32 array into 1-dimensional array
-unsigned int linear(byte x, byte y, byte z, byte t){
+unsigned int linear(byt x, byt y, byt z, byt t){
   assert ((x>=0)&&(x<32)); assert ((y>=0)&&(y<32));
   assert ((z>=0)&&(z<32)); assert ((t>=0)&&(t<32));
   unsigned int xx= x;
@@ -73,26 +73,26 @@ bool oqso (long double *value, unsigned long *hash, PRG gen,
   // the number of read integer could be changed easily if we do not use the distribution
   // but kept the same as in dieharder for now
  
-  byte *bitset;
-  bitset= (byte *) malloc(NUM_QUADS*BYTES_PER_PAIR);  
+  byt *bitset;
+  bitset= (byt *) malloc(NUM_QUADS*BYTES_PER_PAIR);  
   if (bitset==NULL) return(false);
   // bitset is treated as a bit array: BYTES_PER_PAIR bytes 
   // starting at the position POS(x,y,z,t) are used
   // for registering pairs quadruples (x,y,z,t) taken from the different positions of 
   // consecutive 32-integer pairs.
   for (int i=0; i<NUM_QUADS*BYTES_PER_PAIR; i++){
-    bitset[i]= (byte) 0;
+    bitset[i]= (byt) 0;
   }  
   // initially bitset is empty
 
-#define ADD_QUAD(x,y,z,t,pos) bitset[linear((x),(y),(z),(t))*BYTES_PER_PAIR+((pos)/8)]|=(byte)(1<<((pos)%8))  
+#define ADD_QUAD(x,y,z,t,pos) bitset[linear((x),(y),(z),(t))*BYTES_PER_PAIR+((pos)/8)]|=(byt)(1<<((pos)%8))  
   // adding pair (x,y) of 1024-letters at position pos \in [0,23]
-#define IS_QUAD(x,y,z,t,pos) (bitset[linear((x),(y),(z),(t))*BYTES_PER_PAIR+((pos)/8)] & ((byte)(1<<((pos)%8))) != 0)
+#define IS_QUAD(x,y,z,t,pos) (bitset[linear((x),(y),(z),(t))*BYTES_PER_PAIR+((pos)/8)] & ((byt)(1<<((pos)%8))) != 0)
   // checking whether the correspodint pair exists for a given position pos
   
   unsigned int quad[4]; // for 4 consecutive 32-bit ints from the generator
   for (long i=0; i<NINTS; i++){
-    for (byte j=0; j<3; j++){quad[j]= quad[j+1];} // left shift
+    for (byt j=0; j<3; j++){quad[j]= quad[j+1];} // left shift
     if (!g_int32_lsb(&(quad[3]),gen)){free(bitset);return(false);}
     // i+1 generator values are read
     if (i+1>=4){// quad is filled with read values
@@ -111,10 +111,10 @@ bool oqso (long double *value, unsigned long *hash, PRG gen,
   // count the free slots in tables for all positions
   long count[NUM_POSITIONS];
   for (int i=0; i<NUM_POSITIONS; i++){count[i]=0;}
-  for (byte x=0; x<ALPHABET_SIZE; x++){
-    for (byte y=0; y<ALPHABET_SIZE; y++){
-      for (byte z=0; z<ALPHABET_SIZE; z++){
-        for (byte t=0; t< ALPHABET_SIZE; t++){
+  for (byt x=0; x<ALPHABET_SIZE; x++){
+    for (byt y=0; y<ALPHABET_SIZE; y++){
+      for (byt z=0; z<ALPHABET_SIZE; z++){
+        for (byt t=0; t< ALPHABET_SIZE; t++){
           // sum counters for all positions and a given pair
           for (int pos=0; pos<NUM_POSITIONS; pos++){
             count[pos]+= IS_QUAD(x,y,z,t,pos);     

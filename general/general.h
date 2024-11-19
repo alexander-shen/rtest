@@ -10,9 +10,9 @@
 #include <sys/stat.h>
 #include <sys/types.h> 
 
-typedef unsigned char byte;
+typedef unsigned char byt;
 
-void print8(byte x);
+void print8(byt x);
 
 void print32(unsigned x);
 

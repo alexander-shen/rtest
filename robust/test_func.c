@@ -50,7 +50,7 @@ bool all_bytes (long double *value, unsigned long *hash, PRG gen,
   long num_observed=0;
 #define BOUND 20000 // to bound the number of trials  
   while ((num_observed<NUM_BYTES)&&(count<BOUND)){
-    byte next;
+    byt next;
     if (!g_byte (&next,gen)) {return(false); }
     if (!occur[next]){
       occur[next]= true;
@@ -78,7 +78,7 @@ bool all_16 (long double *value, unsigned long *hash, PRG gen,
   long num_observed=0;
 #define BOUND_16 1000000 // to bound the number of trials  
   while ((num_observed<NUM_16)&&(count<BOUND_16)){
-    byte next1, next2;
+    byt next1, next2;
     if (!g_byte (&next1,gen)) {return(false); }
     if (!g_byte (&next2,gen)) {return(false); }
     int int16= (((unsigned int)next1)<<8)+((unsigned int)next2);

@@ -87,4 +87,7 @@ test_func birthdays;
 //16 diehard/dieharder birthday test
 
 test_func mindist2d;
-//17 minimal distance in 2d test
+//17 minimal 2d distance
+
+test_func spectral;
+//18 spectral test

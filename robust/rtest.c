@@ -228,8 +228,6 @@ void usageif(bool x, char* progname){
 // Main program: analyzes options and calls testing
 int main(int argc, char *argv[]){
   bool ok;
-  byte next;
-  int opt; // return value for getopt function
   
   // TODO: long option names (now mentioned but not implemented
   // Variables to keep option parameters
@@ -246,14 +244,14 @@ int main(int argc, char *argv[]){
   char *output_directory;
   bool output= false;
   
-  // -v debug option [--debug]
+  // -v debug option [--verbose]
   bool debug= false;
   
   // -k use exact Kolmogorov--Smirnov computation [--ksexact]
   bool ksexact= false;
   
   // -p n0 -q n1 sample sizes for 2-sample KS-testing [--ptest --petalon]
-  int n0,n1; 
+  int n0= 0; int n1= 0;
   
   // -t test_number [--test]
   int num_func= -1; // no default test function
@@ -272,9 +270,54 @@ int main(int argc, char *argv[]){
   
   // -m modifier [--modifier], changes the behavior of some tests
   int modifier= 0;
+   
+  //long options use: see
+  // https://www.gnu.org/software/libc/manual/html_node/Getopt-Long-Options.html
+
+  int longopt_index, opt; // for getopt 
   
+// options for spectral tests and their defaults:
+  int s_size= 256; 
+  int s_iterations= 10000;
+  int s_degree= 4;
+  double s_gap= 0.001;
+  double s_error= 0.001;
+  // used as keys in getopt (for spectral tests):  
+  #define SGAP 1001
+  #define SERROR 1002
+  #define SSIZE 1003
+  #define SDEGREE 1004
+  #define SITERATIONS 1005
+  // establishes equivalences of long and short options:
+  static struct option long_options[] =
+        {
+          {"ksexact", no_argument, 0, 'k'},
+          {"verbose", no_argument, 0, 'v'},
+          {"xor", no_argument, 0, 'x'},
+          {"output", required_argument, 0, 'o'},
+          {"dimension", required_argument, 0, 'd'}, 
+          {"ntest", required_argument, 0, 'n'},                   
+          {"file", required_argument, 0, 'f'},
+          {"etalon", required_argument, 0, 'e'},
+          {"ptest", required_argument, 0, 'p'},
+          {"petalon", required_argument, 0, 'q'},
+          {"test", required_argument, 0, 't'},
+          {"modifier", required_argument, 0, 'm'},
+          {"repetitions", required_argument, 0, 'r'},
+          {"sgap", required_argument, 0, SGAP},
+          {"serror", required_argument, 0, SERROR},
+          {"ssize", required_argument, 0, SSIZE},
+          {"sdegree", required_argument, 0, SDEGREE}, 
+          {"siterations", required_argument, 0, SITERATIONS},
+          {0, 0, 0, 0}
+        };
+
   // options reading loop using getopt library function:
-  while ((opt = getopt(argc, argv, "kvxr:o:n:d:f:e:p:q:t:m:")) != -1) {
+  while (1) {
+    opt = getopt_long(argc, argv, "kvxo:d:n:f:e:p:q:t:m:r:", 
+                      long_options, &longopt_index);
+    if (opt==-1){break;}
+    errno= 0; opterr= 0;
     switch (opt) {
       case 'k':
         ksexact= true;
@@ -294,10 +337,7 @@ int main(int argc, char *argv[]){
         break;
       case 'n':
         num_tested=atoi(optarg);
-        break;  
-      case 'r':
-        repetitions= atoi(optarg);
-        break;        
+        break;          
       case 'f':
         tested= optarg;
         tested_specified= true;
@@ -317,16 +357,41 @@ int main(int argc, char *argv[]){
         break; 
       case 'm':
         modifier= atoi(optarg);  
+        break;
+      case 'r':
+        repetitions= atoi(optarg);
+        break;  
+      case SGAP:
+        s_gap= strtold(optarg,NULL);
+        if ((errno==ERANGE)||(errno==EINVAL)){fprintf(stderr,"Bad --sgap option\n"); exit(1);}
+        break;
+      case SERROR:
+        s_error= strtold(optarg,NULL);
+        if ((errno==ERANGE)||(errno==EINVAL)){fprintf(stderr,"Bad --serror option\n"); exit(1);}      
+        break;
+      case SSIZE:
+        s_size= strtol(optarg,NULL,10);
+        if ((errno==ERANGE)||(errno==EINVAL)){fprintf(stderr,"Bad --ssize option\n"); exit(1);} 
+        break;
+      case SDEGREE:
+        s_degree= strtol(optarg,NULL,10);
+        if ((errno==ERANGE)||(errno==EINVAL)){fprintf(stderr,"Bad --sdegree option\n"); exit(1);}       
+        break;
+      case SITERATIONS:
+        s_iterations= strtol(optarg,NULL,10);
+        if ((errno==ERANGE)||(errno==EINVAL)){fprintf(stderr,"Bad --siterations option\n"); exit(1);}       
+        break;      
       default: /* '?' */
         usageif(true,argv[0]);
     }
   }  // end of reading-options loop
   
-  #define SAMPLE_SIZE_BOUND 10000
+
   // checking correctness of the options:
   usageif((optind!=argc)||(n0<=0)||(n1<=0)||(!tested_specified)||(!etalon_specified)||(num_func<0), argv[0]);
+  #define SAMPLE_SIZE_BOUND 10000
   if ((n0>SAMPLE_SIZE_BOUND)||(n1>SAMPLE_SIZE_BOUND)){    
-    fprintf(stderr,"Too big sample size in, check -p/-q option arguments\n"); 
+    fprintf(stderr,"Too big sample sizes [-p %d, -q %d]\n", n0, n1); 
     exit(1); 
   }
   if (repetitions<0){
@@ -359,7 +424,7 @@ int main(int argc, char *argv[]){
   PRG compare_etalon;
   if (use_xor){
     ok=g_create_xor(&compare_etalon, test, etal);
-    if (!ok){fprintf (stderr, "Internal error: XOR generator not created\n");}
+    if (!ok){fprintf (stderr, "Internal error: XOR generator not created\n"); exit(1);}
   }else{
     compare_etalon= etal;
   }  
@@ -372,6 +437,13 @@ int main(int argc, char *argv[]){
   int_parameters[2]= dimension;
   int_parameters[3]= num_tested;
   int_parameters[4]= modifier; 
+  if (functions_list[num_func].reference==spectral){
+    int_parameters[4]= s_size;
+    int_parameters[5]= s_degree;
+    int_parameters[6]= s_iterations;
+    real_parameters[0]= s_gap;
+    real_parameters[1]= s_error;
+  }
   if (debug&&!use_xor){
      printf("Comparing files %s and %s\n", tested, etalon);
   }

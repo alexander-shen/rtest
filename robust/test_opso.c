@@ -64,21 +64,21 @@ bool opso (long double *value, unsigned long *hash, PRG gen,
   // the number of read integer could be changed easily if we do not use the distribution
   // but kept the same as in dieharder for now
  
-  byte *bitset;
-  bitset= (byte*) malloc(ALPHABET_SIZE*ALPHABET_SIZE*BYTES_PER_PAIR);
+  byt *bitset;
+  bitset= (byt*) malloc(ALPHABET_SIZE*ALPHABET_SIZE*BYTES_PER_PAIR);
   if (bitset==NULL) return(false);
   // bitset is treated as a bit array: BYTES_PER_PAIR bytes 
   // starting at the position (ALPHABET_SIZE*x+y)*BYTES_PER_PAIR are used
   // for registering pairs (x,y) taken from the different positions of 
   // consecutive 32-integer pairs.
   for (int i=0; i<ALPHABET_SIZE*ALPHABET_SIZE*BYTES_PER_PAIR; i++){
-    bitset[i]= (byte) 0;
+    bitset[i]= (byt) 0;
   }  
   // initially bitset is empty
 
-#define ADD_PAIR(x,y,pos) bitset[((x)*ALPHABET_SIZE+(y))*BYTES_PER_PAIR+((pos)/8)]|=(byte)(1<<((pos)%8))  
+#define ADD_PAIR(x,y,pos) bitset[((x)*ALPHABET_SIZE+(y))*BYTES_PER_PAIR+((pos)/8)]|=(byt)(1<<((pos)%8))  
   // adding pair (x,y) of 1024-letters at position pos \in [0,23]
-#define IS_PAIR(x,y,pos) ((bitset[((x)*ALPHABET_SIZE+(y))*BYTES_PER_PAIR+((pos)/8)]&((byte)(1<<((pos)%8))))!=0)
+#define IS_PAIR(x,y,pos) ((bitset[((x)*ALPHABET_SIZE+(y))*BYTES_PER_PAIR+((pos)/8)]&((byt)(1<<((pos)%8))))!=0)
   // checking whether the correspodint pair exists for a given position pos
 #define BOUND_CHECK(x,y,pos) ( (0<=(x))&&((x)<ALPHABET_SIZE)&&(0<=(y))&&((y)<ALPHABET_SIZE)&&(0<=(pos))&&((pos)<NUM_POSITIONS) )  
   

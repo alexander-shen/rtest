@@ -9,7 +9,7 @@ void main(int argc, char *argv[]){
   printf ("Byte reading\n");
   printf ("PRG label: %d\n", (int) test);
   for (int i=0; i<8; i++){
-    byte b;
+    byt b;
     assert (g_byte(&b, test));
     printf ("%3u ",(unsigned int)b);
   }
@@ -22,7 +22,7 @@ void main(int argc, char *argv[]){
     unsigned int in;
     assert (g_int32_lsb (&in, test));
     printf ("%10u = [",(unsigned int)in);
-    byte buf[4];
+    byt buf[4];
     for (int j=3; j>=0; j--){
       buf[j]= in%256; in /=256;
     }
@@ -40,7 +40,7 @@ void main(int argc, char *argv[]){
     unsigned int in;
     assert (g_int16_lsb (&in, test));
     printf ("%10u = [",(unsigned int)in);
-    byte buf[2];
+    byt buf[2];
     for (int j=1; j>=0; j--){
       buf[j]= in%256; in /=256;
     }
@@ -72,7 +72,7 @@ void main(int argc, char *argv[]){
   for (int count=0; count<9; count++){
     unsigned int wrd;
     g_getword (&wrd, 7, test);
-    byte buf[7];
+    byt buf[7];
     for (int i=6; i>=0; i--){
       buf[i]= wrd%2;
       wrd /= 2;

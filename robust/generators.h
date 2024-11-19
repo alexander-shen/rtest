@@ -49,7 +49,7 @@ bool g_create_xor (PRG *new_generator, PRG gen1, PRG gen2);
 
 // Access to the generator as a byte stream
 
-bool g_byte (byte *b, PRG gen);
+bool g_byte (byt *b, PRG gen);
 // *b= the next byte from generator with label gen
 // for now the main access unit is byte; all other ways of getting 
 // bits take bytes from the byte stream (e.g. file)

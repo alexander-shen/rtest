@@ -1,6 +1,6 @@
 #include "general.h"
 
-void print8(byte x){
+void print8(byt x){
   int bits[8];
   for (int i=0;i<8;i++){
     bits[i]=x%2;
