@@ -48,7 +48,7 @@ Monkey tests for random numbers, Computers. Math. Applic. 26(9),1-10 (1993) */
 #define NUM_QUADS (32*32*32*32)
 #define NUM_POSITIONS 28
 #define BYTES_PER_PAIR 4 // upper rounding of NUM_POSITIONS/8
-#define NINTS (1<<21)+3 // to get 2^21 factors of length 4
+#define NINTS ((1<<21)+3) // to get 2^21 factors of length 4
 #define MEAN 141909.6005321316
 #define SIGMA 294.6558723658
 
@@ -68,7 +68,7 @@ unsigned int linear(byte x, byte y, byte z, byte t){
 
 bool oqso (long double *value, unsigned long *hash, PRG gen,
            int *param, double *real_param, bool debug){
-  assert (param[2]==28); // dimension is fixed to be 23
+  assert (param[2]==28); // dimension is fixed to be 28
   assert (param[3]==NINTS); // number of read integers should be 2^{23}+1
   // the number of read integer could be changed easily if we do not use the distribution
   // but kept the same as in dieharder for now
@@ -87,8 +87,8 @@ bool oqso (long double *value, unsigned long *hash, PRG gen,
 
 #define ADD_QUAD(x,y,z,t,pos) bitset[linear((x),(y),(z),(t))*BYTES_PER_PAIR+((pos)/8)]|=(byte)(1<<((pos)%8))  
   // adding pair (x,y) of 1024-letters at position pos \in [0,23]
-#define IS_QUAD(x,y,z,t,pos) (bitset[linear((x),(y),(z),(t))*BYTES_PER_PAIR+((pos)/8)] & ((byte)(1<<((pos)%8))) != 0)
-  // checking whether the correspodint pair exists for a given position pos
+#define IS_QUAD(x,y,z,t,pos) ((bitset[linear((x),(y),(z),(t))*BYTES_PER_PAIR+((pos)/8)] & ((byte)(1<<((pos)%8)))) != 0)
+  // checking whether the correspoding pair exists for a given position pos
   
   unsigned int quad[4]; // for 4 consecutive 32-bit ints from the generator
   for (long i=0; i<NINTS; i++){

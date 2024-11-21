@@ -6,6 +6,7 @@
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_fft_complex.h>
 #include <gsl/gsl_sort_uint.h>
+#include <gsl/gsl_sort_int.h>
 #include "../kolmogorov-smirnov/k1smirnov.h"
 
 typedef bool test_func(long double *value, unsigned long *hash, PRG gen, int *param, double *real_param, bool debug);
