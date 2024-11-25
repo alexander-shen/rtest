@@ -1,0 +1,41 @@
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{amssymb,amsmath,amsthm}
+\usepackage[hyphens]{url}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+
+\usepackage{ifxetex}
+\ifxetex
+  \usepackage{fontspec,xltxtra,xunicode}
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Mapping=tex-text}
+  %\newfontfamily\cyrillicfont{PT Astra Sans}
+  \newfontfamily\cyrillicfont{Linux Libertine O}
+  \setromanfont[Mapping=tex-text]{Linux Libertine O}
+  %\setmathfont[Scale=MatchLowercase]{xits-math.otf}
+  \setmathfont[Scale=MatchLowercase]{STIX Two Math}
+  %\setmathfont[Scale=MatchLowercase]{Asana-Math.otf}
+  %\setsansfont[Scale=MatchLowercase,Mapping=tex-text]{PT Astra Sans}
+  \setmonofont[Scale=0.8]{PT Mono}
+  \usepackage{polyglossia}
+  \setotherlanguage{russian}
+  \setotherlanguage{german}
+  \setotherlanguage{french}
+  \setdefaultlanguage{english}
+  \newcommand{\rus}[1]{\begin{russian}#1\end{russian}}   
+  \newcommand{\fra}[1]{\begin{french}#1\end{french}} 
+  \newcommand{\ger}[1]{\begin{german}#1\end{german}}   
+   \newcommand{\sectionrus}[1]{\section{#1}}
+\else 
+  \usepackage[utf8]{inputenc}
+  \usepackage[russian,german,french,english]{babel}
+  \newcommand{\rus}[1]{\foreignlanguage{russian}{#1}}
+  \newcommand{\fra}[1]{\foreignlanguage{french}{#1}}
+  \newcommand{\ger}[1]{\foreignlanguage{german}{#1}}
+  \newcommand{\sectionrus}[1]{\section{\rus{#1}}}
+\fi
+
+\emergencystretch=3mm
+\let\le=\leqslant
+\let\ge=\geqslant

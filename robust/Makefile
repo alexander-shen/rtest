@@ -8,7 +8,7 @@
 # rtest1m.sh: tests that make sense for 1Mb file
 
 # compiler definition
-CC = g++
+CC = clang++
 
 # scripts
 
