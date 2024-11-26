@@ -1,0 +1,77 @@
+all_bytes:
+rtest -x -f rtest100m.sh -e gen.bin -p 5000 -q5000 -n 1 -t 0 -d 1 -r 5
+oops, eof in generator 0
+all_16
+rtest -x -f rtest100m.sh -e gen.bin -p 20 -q 20 -n 1 -t 1 -d 1 -r 1
+oops, eof in generator 0
+
+sts_serial:
+rtest -x -f rtest100m.sh -e gen.bin -p 1000 -q 1000 -n 10000 -t 3 -d 48 -r 1
+oops, eof in generator 0
+oops... no byte from gen 0
+
+opso:
+rtest -x -f rtest100m.sh -e gen.bin -p 6 -q 6 -n 2097153 -t 4 -d 23 -r 1
+oops, eof in generator 0
+oops... no byte from gen 0
+
+oqso:
+rtest -x -f rtest100m.sh -e gen.bin -p 6 -q 6 -n 2097155 -t 5 -d 28 -r 1
+oops, eof in generator 0
+oops... no byte from gen 0
+
+bytedistribs:
+rtest -x -f rtest100m.sh -e gen.bin -p 400 -q 400 -n 10000 -t 6 -d 1 -r 1
+oops, eof in generator 0
+oops... no byte from gen 0
+
+knuth_runs:
+rtest -x -f rtest100m.sh -e gen.bin -p 500 -q 500 -n 20000 -t 7 -d 2 -r 1
+oops, eof in generator 0
+oops... no byte from gen 0
+
+osums:
+rtest -x -f rtest100m.sh -e gen.bin -p 2500 -q 2500 -n 200 -t 8 -d 1 -r 10
+oops, eof in generator 0
+oops... no byte from gen 0
+
+ent_8_16:
+rtest -x -f rtest100m.sh -e gen.bin -p 1000 -q 1000 -n 10000 -t 9 -d 4 -r 1
+oops, eof in generator 0
+oops... no byte from gen 0
+oops.. no input
+
+fftest:
+rtest -x -f rtest100m.sh -e gen.bin -p 2000 -q 2000 -n 8192 -t 10 -d 1 -r 1
+oops, eof in generator 0
+oops... no byte from gen 0
+
+rank32x32:
+rtest -x -f rtest100m.sh -e gen.bin -p 200 -q 200 -n 1000 -t 11 -d 1 -r 1
+oops, eof in generator 0
+oops... no byte from gen 0
+
+rank6x8:
+rtest -x -f rtest100m.sh -e gen.bin -p 1000 -q 1000 -n 1500 -t 12 -d 25 -r 1
+oops, eof in generator 0
+oops... no byte from gen 0
+
+bitstream_o:
+rtest -x -f rtest100m.sh -e gen.bin -p 150 -q 150 -n 2097171 -t 13 -d 1 -r 1
+oops, eof in generator 0
+oops... no byte from gen 0
+
+bitstream_n:
+rtest -x -f rtest100m.sh -e gen.bin -p 9 -q 9 -n 41943040 -t 14 -d 1 -r 1
+oops, eof in generator 0
+oops... no byte from gen 0
+
+lz_split
+rtest -x -f rtest100m.sh -e gen.bin -p 320 -q 320 -n 31250 -t 15 -d 1 -r 1
+oops, eof in generator 0
+oops... no byte from gen 0
+
+birthdays
+rtest -x -f rtest100m.sh -e gen.bin -p 100 -q 100 -n 100 -t 16 -d 32 -r 1
+oops, eof in generator 0
+oops... no byte from gen 0

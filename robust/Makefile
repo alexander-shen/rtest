@@ -44,7 +44,9 @@ test-generators-run: test-generators;\
    echo "No diff output means OK"
    
 clean: ; \
-rm *~ *.o a.out rtest test-generators tmp.out; exit 0;
+   rm *~ *.o a.out rtest test-generators tmp.out; \
+   cd doc; make clean; cd ..; \
+   exit 0;
 
 install: rtest; \
 sudo cp rtest $(SCRIPTS) /usr/local/bin/
