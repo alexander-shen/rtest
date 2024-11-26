@@ -13,7 +13,7 @@
 # tests that make sense for 1Mb/10Mb/100Mb/1Gb/10Gb files
 
 # compiler definition
-CC = g++
+CC = clang++
 
 CPP_INCLUDE = minimal_distance.hpp ../spectral_tests/specgraph.h ../spectral_tests/spectral_rtest.h ../spectral_tests/rand.h
 
