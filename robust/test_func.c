@@ -21,7 +21,8 @@ test_function functions_list[]={
   {bitstream_n, "Overlapped bitstream test"},
   {lz_split, "Lempel-Ziv test restored from NIST"},
   {birthdays, "Diehard/dieharder birthday test"},
-  {mindist2d, "2D minimal distance 32 int pairs test"}
+  {mindist2d, "2D minimal distance 32 int pairs test"},
+  {spectral, "spectral test"}
 };
 
 int len_func_list=sizeof(functions_list)/sizeof(test_function);
