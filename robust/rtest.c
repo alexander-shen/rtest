@@ -311,6 +311,11 @@ int main(int argc, char *argv[]){
           {"siterations", required_argument, 0, SITERATIONS},
           {0, 0, 0, 0}
         };
+  // checking unsigned int and unsigned long size
+  assert (sizeof(unsigned int)==4);
+  assert (sizeof(unsigned long)==8);
+  // The program should also work if sizes are >= 4 and >=8 respectively 
+  // (not tested)
 
   // options reading loop using getopt library function:
   while (1) {

@@ -4,12 +4,12 @@
  */
 
 /* The test depends on two parameters: the number of bits (n) analyzed
- and the maximal length of substrings analyzed (m). It produces several
- an array of 3m values (2 values called P-value1 and P-value2 in the NIST, 
- for each string of length up to m.
+ and the maximal length of substrings analyzed (m). It produces
+ an array of 3m values (2 values called P-value1 and P-value2 in the NIST,
+ and one "raw value") for each length in 1..m.
 
  Let X be the sequence of n bits to be analyzed. For each word w of length 
- at most l we count the number count[w] of occurences of w in X (considered 
+ at most m we count the number count[w] of occurences of w in X (considered 
  as a cyclic word); the sum of all counts[w] for words w of given length 
  equals n. The we compute 
    psi_square [k] = (2^{k}/n)\sum_x (count[x]^2) - n
@@ -44,9 +44,9 @@ bool sts_serial (long double *value, unsigned long *hash, PRG gen,
   assert ((m>0)&&(m<32));
   assert (sizeof(int)>=4); assert(sizeof(long)>=8); // let us check here, too...
   for (int i=0; i<param[2];i++){value[i]=(long double)0.0;} 
-  // unused values should be 0 
+  // unused values should be 0 (if there are more than 3m due to rounding)
   long nint = param[3]; // number of int samples to be processed
-  long n=nint*32; // number of bytes to be processed
+  long n=nint*32; // number of bits to be processed
   unsigned int buf,curr,loop;
   int bufc,currc; // the number of bits in buf and curr
   unsigned int *count;
@@ -54,6 +54,7 @@ bool sts_serial (long double *value, unsigned long *hash, PRG gen,
   count= (unsigned int *)malloc(powerm*sizeof(int));
   if (count==NULL){fprintf(stderr, "Not enough memory\n"); exit(1);}
   for (int i=0; i<powerm; i++){count[i]= 0;}
+  // count = array of size 2^m containing counters for all factors of length m
   
   /* Bits are read from the generator in groups of 32 bits, as ints.
   Since many generators produce them in this way, it is better to keep 

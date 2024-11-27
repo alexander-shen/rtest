@@ -28,7 +28,8 @@ test_function functions_list[]={
 int len_func_list=sizeof(functions_list)/sizeof(test_function);
 
 
-// For testing 
+// For testing [test number = 3]
+
 bool dummy_dimension(long double *value, unsigned long *hash, PRG gen, 
                      int *param, double *real_param, bool debug){
   static int count=0;
@@ -39,6 +40,9 @@ bool dummy_dimension(long double *value, unsigned long *hash, PRG gen,
   count++;
   return(true);
 }
+
+// Two simple functions are implemented in this file as an example;
+// others are provided in separate files.
 
 // how many bytes needed to see all 256 values
 bool all_bytes (long double *value, unsigned long *hash, PRG gen,
