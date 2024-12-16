@@ -21,9 +21,16 @@ bool lz_split (long double *value, unsigned long *hash, PRG gen,
   //reserve space for 100000 words, this should be enough for 10^6 bits (NIST says 
   // the average number of words is about 70000 for 10^6 words, and the average length
   // of the word should increase with n;
-  int sons[maxvert][2]; // numbers of left and right sons of a vertex
+  
+  int *sons;
+  sons= (int *) malloc (2*maxvert*sizeof(int));
+  assert (sons!=NULL);
+  // replaces array int sons[maxvert][2] for the indices of the 
+  // left and right sons of a vertex to avoid large stack requirements [2024-12-16]
+  #define SONS(i,j) sons[2*i+j]
+  
   int nil=-1; int root= 0;// 
-  sons[0][0]= nil; sons[0][1]= nil;  
+  SONS(0,0)= nil; SONS(0,1)= nil;  
   int firstfree= 1; // first free slot for vertex = number of vertices including the empty one
   int curvert= root; // tree root 
   // tree that contains only root is created;
@@ -34,16 +41,16 @@ bool lz_split (long double *value, unsigned long *hash, PRG gen,
     bool b;
     if (!g_getbit(&b,gen)){return(false);}
     // new bit is read
-    if (sons[curvert][b]!=nil){ // next bit still keeps us in the tree
-      curvert=sons[curvert][b];
+    if (SONS(curvert,b)!=nil){ // next bit still keeps us in the tree
+      curvert= SONS(curvert,b);
       if (debug){
         printf("%d",b);
       }
     }else if (firstfree<maxvert) { 
       // we have to create new vertex and there is space in the tree
-      assert (sons[curvert][b]==nil);
-      sons[curvert][b]=firstfree;
-      sons[firstfree][0]= nil; sons[firstfree][1]= nil;
+      assert (SONS(curvert,b)==nil);
+      SONS(curvert,b)=firstfree;
+      SONS(firstfree,0)= nil; SONS(firstfree,1)= nil;
       firstfree++;
       if (debug){
          printf("%d\n",b);
@@ -70,6 +77,7 @@ bool lz_split (long double *value, unsigned long *hash, PRG gen,
   unsigned int h1, h2;
   if ((!g_int32_lsb(&h1,gen))|| (!g_int32_lsb(&h2,gen))){return(false);}
   *hash = (((unsigned long) h2)<<32)+((unsigned long) h1);
-  if (debug) {print64(*hash); printf("\n");} 
+  if (debug) {print64(*hash); printf("\n");}
+  free(sons); // sons was a pointer to dynamically allocated memory 
   return(true);
 }

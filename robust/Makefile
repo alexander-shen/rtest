@@ -13,7 +13,7 @@
 # tests that make sense for 1Mb/10Mb/100Mb/1Gb/10Gb files
 
 # compiler definition
-CC = clang++
+CC = g++
 
 CPP_INCLUDE = minimal_distance.hpp ../spectral_tests/specgraph.h ../spectral_tests/spectral_rtest.h ../spectral_tests/rand.h
 
@@ -31,7 +31,7 @@ KS_HEADERS = ../kolmogorov-smirnov/ksmirnov.h ../kolmogorov-smirnov/k1smirnov.h 
 KS_C = ../kolmogorov-smirnov/ksmirnov.c ../kolmogorov-smirnov/k1smirnov.c ../kolmogorov-smirnov/ks2mp.c
 
 # needed for gsl library and for standard math library
-FLAGS = -I /usr/local/include -L /usr/local/bin/ -lgsl -lgslcblas -lm -lgmp
+FLAGS = -I /usr/local/include -L /usr/local/bin/ -lgsl -lgslcblas -lm -lgmp -fsanitize=address
 
 rtest: rtest.c test_func.h $(TESTS_C) $(CPP_INCLUDE) $(CPP_CODE) generators.c generators.h $(KS_HEADERS) $(KS_C) ../general/general.c ../general/general.h; \
 $(CC) -o rtest rtest.c $(TESTS_C) $(CPP_CODE) generators.c $(KS_C) ../general/general.c $(FLAGS)
