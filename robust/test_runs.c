@@ -104,7 +104,7 @@ bool knuth_runs (long double *value, unsigned long *hash, PRG gen,
   while (i!=n){
     int next; 
     if(!g_int32_lsb((unsigned int*) &next, gen)){return(false);}
-    if(debug){printf("%d ",last);}   
+    if(debug){printf("%d ",next);}   
     if (next>last){
       up_run++;
       down_runs[((down_run<RUNMAX)?(down_run-1):RUNMAX-1)]++;
