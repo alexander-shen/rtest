@@ -183,5 +183,3 @@ void main_child(int argc, char* argv[]){
   glLineWidth(LINE_WIDTH);
   glutMainLoop();
 }
-
-
