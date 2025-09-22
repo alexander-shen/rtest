@@ -12,13 +12,13 @@
 
 
 readwav: readwav.c wave.h graph_pipe.c graph_pipe.h; \
-   gcc -o readwav graph_pipe.c readwav.c -lglut -lGL -lGLU
+   gcc -fcommon -o readwav graph_pipe.c readwav.c -lglut -lGL -lGLU
 
 getdatawav: getdatawav.c wave.h; \
-  gcc -o getdatawav getdatawav.c
+  gcc -fcommon -o getdatawav getdatawav.c
   
 drawpair: drawpair.c graph_pipe.c graph_pipe.h; \
-  gcc -o drawpair drawpair.c graph_pipe.c -lglut -lGL -lGLU  
+  gcc -fcommon -o drawpair drawpair.c graph_pipe.c -lglut -lGL -lGLU  
 
 clean: ; \
    rm *~ *.o; rm readwav getdatawav drawpair
