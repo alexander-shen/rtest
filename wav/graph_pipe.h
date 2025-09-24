@@ -40,6 +40,6 @@ void graph_end(); // finish drawing
 
 // data for pipe, internal
 
-int  fd[2]; // should be external to be shared between parent and child
+extern int  fd[2]; // should be external to be shared between parent and child
 #define PIPEWRITE fd[1]
 #define PIPEREAD fd[0]

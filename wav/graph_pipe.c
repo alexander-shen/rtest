@@ -1,5 +1,8 @@
 #include "graph_pipe.h"
 
+// declared external in graph_pipe.h
+int fd[2];
+
 // common portion for parent and child
 
 // Pipe is a stream of integers of the format
@@ -88,7 +91,6 @@ void IdleEvent (){
     assert(buflen<MAXBUFLEN);
     buf[buflen]=inp; buflen++; // put the new element to buffer
     if ((buflen==2)&&(buf[0]==COLOR)){
-      printf("c");
       if (buf[1]==WHITE){glColor3f(1.0f, 1.0f, 1.0f);}
       if (buf[1]==RED){glColor3f(1.0f, 0.14f, 0.0f);}
       if (buf[1]==ORANGE){glColor3f(1.0f, 0.6f, 0.0f);}

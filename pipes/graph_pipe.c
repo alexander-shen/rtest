@@ -1,5 +1,8 @@
 #include "graph_pipe.h"
 
+// declared external in graph_pipe.h
+int fd[2];
+
 // common portion for parent and child
 
 // Pipe is a stream of integers of the format
@@ -58,7 +61,7 @@ void graph_end(){
 // child portion
 
 void display() {
-   glFlush();  // Render now
+   glutSwapBuffers();  // Render now
 }
 
 
@@ -71,15 +74,19 @@ void IdleEvent (){
 #define MAXBUFLEN 5
   static int buf[MAXBUFLEN];
   static int buflen=0; // at most 5 [<=4 between calls]
-  static int pipe_closed= false;
+  static bool pipe_closed= false;
   static bool inside= false; // inside Begin_End_group
   static int regime; // POINT or LINE, valid if inside
   static int cur_color;
+  long count_ops= 0;
+  #define THRESHOLD 100
   int inp; // place to read from the pipe
   int numread; // number of elements read
  
   numread= read(PIPEREAD, &inp, sizeof(int));
   while (numread==sizeof(int)){
+    count_ops++; // for screen updating
+
     pipe_closed= false;
     assert(buflen<MAXBUFLEN);
     buf[buflen]=inp; buflen++; // put the new element to buffer
@@ -96,7 +103,7 @@ void IdleEvent (){
     } else if ((buflen==3)&&(buf[0]==POINT)){
       // draw a point with buffer data; clear the buffer
       int x= buf[1]; int y= buf[2];
-      if ((x>=0)&&(x<WIN_WIDTH)&&(y>=0)&&(y,WIN_HEIGHT)){
+      if ((x>=0)&&(x<WIN_WIDTH)&&(y>=0)&&(y<WIN_HEIGHT)){
         if (!inside){
           inside= true;
           glBegin(GL_POINTS);
@@ -108,12 +115,18 @@ void IdleEvent (){
         }   
         assert (inside && (regime==POINT)); 
         glVertex2i(x,y);
+        // to avoid postponing redraw:
+        if ((count_ops % (long) THRESHOLD)==0){
+          glEnd();
+          glutSwapBuffers();
+          glBegin(GL_POINTS);
+        }
       }else{
         //points outside the window are skipped
       }
       buflen= 0; // clear the buffer
-    } else if ((buflen==5)&&(buf[0]=LINE)){
-    // draw a point with buffer data; clear the buffer
+    } else if ((buflen==5)&&(buf[0]==LINE)){
+    // draw a line with buffer data; clear the buffer
       int x= buf[1]; int y= buf[2]; int nx= buf[3]; int ny=buf[4];
       if ((x>=0)&&(x<WIN_WIDTH)&&(y>=0)&&(y<WIN_HEIGHT)&&
           (nx>=0)&&(nx<WIN_WIDTH)&&(ny>=0)&&(ny<WIN_HEIGHT) ){
@@ -139,8 +152,8 @@ void IdleEvent (){
   if (inside){
     glEnd();
     inside= false;
-    glFlush(); // update the screen
-  }  
+    glutSwapBuffers(); // update the screen
+  }   
   if (numread==-1){
     assert(errno == EAGAIN); // pipe is empty
   }else if (numread==0){
@@ -157,7 +170,6 @@ void IdleEvent (){
 }
  
 void main_child(int argc, char* argv[]){
-  // printf("Started\n");
   glutInit(&argc, argv); // could extract options from the command line 
                          //https://www.opengl.org/resources/libraries/glut/spec3/node10.html
   glutInitWindowSize(WIN_WIDTH,WIN_HEIGHT);
@@ -173,5 +185,3 @@ void main_child(int argc, char* argv[]){
   glLineWidth(LINE_WIDTH);
   glutMainLoop();
 }
-
-
