@@ -206,7 +206,7 @@ There is also a standalone version of these tests (described shortly in the next
 
 \item{19} \texttt{ks1 [test\_ks1.c,../kolmogorov-smirnov/ks1smirnov.\{c,h\}] }
 
-This is a Kolmogorov--Smirnov test with one sample; see \url{https://www.jstatsoft.org/article/view/v008i18} for details. The test takes \texttt{-n} $32$-bit integers $x_1,\ldots,x_n$ and considers $x_i/2^{32}$ as a sample from uniform distribution on $[0,1]$. Then we find the maximal deviation of the empirical cumulative distribution function from the theoretical one to find (approximate) $p$-value using Kolmogorov--Smirnov approximation. (For testing one can use directly the deviation, so the computation of the approximate $p$-value is redundant, but it may be useful for more detailed investigation.) 
+This is a Kolmogorov--Smirnov test with one sample; see \url{https://www.jstatsoft.org/article/view/v008i18} for details. The test takes \texttt{-n} $32$-bit integers $x_1,\ldots,x_n$ (longer sample requires more memory just to keep all the numbers while sorting) and considers $x_i/2^{32}$ as a sample from uniform distribution on $[0,1]$. Then we find the maximal deviation of the empirical cumulative distribution function from the theoretical one to find (approximate) $p$-value using Kolmogorov--Smirnov approximation. (For testing one can use directly the deviation, so the computation of the approximate $p$-value is redundant, but it may be useful for more detailed investigation.) 
 
 \end{description}
 
