@@ -9,8 +9,8 @@
 #include "graph_pipe.h"
 
 #define MAXLEN 30000 // maximal sample size
-#define MAXFILES 10
-int predefined[MAXFILES]={WHITE,RED,ORANGE,YELLOW,GREEN,BLUE,DARKBLUE,VIOLET,MAGENTA,GREY};
+#define MAXFILES 8
+int predefined[MAXFILES]={WHITE,RED,ORANGE,YELLOW,GREEN,BLUE,DARKBLUE,VIOLET};
 
 int compar (const void *a, const void *b){
   if (*((double*)a)< *((double*)b)) return(-1);

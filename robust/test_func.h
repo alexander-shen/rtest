@@ -92,3 +92,6 @@ test_func mindist2d;
 
 test_func spectral;
 //18 spectral test
+
+test_func ksone;
+//19 one-sample Kolmogorov-Smirnov test

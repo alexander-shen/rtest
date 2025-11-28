@@ -190,7 +190,7 @@ Lempel--Ziv test as it was described in the original version of~\cite{nistsp800-
 
 A ``year'' consists of $2^{24}$ days; we choose $1024$ random days (``birthdays'') and compute $1024$ intervals between birthdays. Some intervals may coincide, and we count the number of coincidences (i.e., the difference between $1024$ and the number of different intervals). We repeat this experiment several times  (\texttt{-n} option) and compare the resulting distribution with presumed approximation (Poisson distribution with $\lambda=16$), getting one $p$-value that is considered as the output of the test. More precisely, we use first $24$ bits from the $32$-bit integers from the input sequence; this gives us one $p$-value, than next $24$ bits from the same $32$-bit integers, and so on ($32$ cyclic shifts, as described --- but not implemented --- in \texttt{dieharder}). The test dimension is $32$, and it uses $1024$ times [\texttt{-n} option] integers ($4096\times \texttt{[-n]}$ bytes) for each set of $32$ values. Note that the test is robust (as any other two-sample test) but its usefulness is not clear (due to the systematic deviation of the observed distribution from the presumed one, see Section~\ref{sec:dieharder-notes}, Figure~\ref{pic:birthdays}).
 
-\item{17} \texttt{mindist2d [text\_dist2d.c, minimal\_distance.hpp]}
+\item{17} \texttt{mindist2d [test\_dist2d.c, minimal\_distance.hpp]}
 
 This test has dimension $2$. First, it uses $2n$ (where $n$ is \texttt{-n} parameter) unsigned $32$ bit integers (scaled to $[0,1]$) to construct $n$ points in the unit square. Then it computes the distance between two closes points. The same is done for $2n$ points obtained as follow: each $32$-bit integer is cut into two halves, and two resulting unsigned $16$-bit integers determine a point in the unit square. The algorithm uses $O(n\log n)$ algorithm of divide and conquer type for finding the minimal distance (the debug output includes also the computations with exchanged coordinates and a naive algorithm result; all three should be the same).
 
@@ -204,9 +204,13 @@ Note that this test is valid for any values of this additional parameters: the b
 
 There is also a standalone version of these tests (described shortly in the next section).
 
+\item{19} \texttt{ks1 [test\_ks1.c,../kolmogorov-smirnov/ks1smirnov.\{c,h\}] }
+
+This is a Kolmogorov--Smirnov test with one sample; see \url{https://www.jstatsoft.org/article/view/v008i18} for details. The test takes \texttt{-n} $32$-bit integers $x_1,\ldots,x_n$ and considers $x_i/2^{32}$ as a sample from uniform distribution on $[0,1]$. Then we find the maximal deviation of the empirical cumulative distribution function from the theoretical one to find (approximate) $p$-value using Kolmogorov--Smirnov approximation. (For testing one can use directly the deviation, so the computation of the approximate $p$-value is redundant, but it may be useful for more detailed investigation.) 
+
 \end{description}
 
-For convenienve we also provide  some shell scripts that run these tests for suitable parameters (adjusted for $1$~Mb, $10$~Mb, $100$~Mb, $1$~Gb, $10$~Gb files). Some tests take a long time, so it may have sense to delete some tests from these files if they take too much time. Two arguments are required: the name of the tested file and the name of the reference file.
+For convenience we also provide  some shell scripts that run these tests for suitable parameters (adjusted for $1$~Mb, $10$~Mb, $100$~Mb, $1$~Gb, $10$~Gb files). Some tests take a long time, so it may have sense to delete some tests from these files if they take too much time. Two arguments are required: the name of the tested file and the name of the reference file.
 
 A short reminder to be taken into account when interpreting the test values:
 

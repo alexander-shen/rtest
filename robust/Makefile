@@ -24,7 +24,7 @@ CPP_CODE =  ../spectral_tests/specgraph.cpp  ../spectral_tests/spectral_rtest.cp
 SCRIPTS = rtest1m.sh rtest10m.sh rtest100m.sh rtest1g.sh rtest10g.sh
 
 # different tests implemented in several files
-TESTS_C = test_func.c test_opso.c test_oqso.c test_sts_serial.c test_bytedistrib.c test_runs.c test_sums.c test_ent.c test_lz.c test_fft.c test_rank.c test_bitstream.c test_birthday.c test_dist2d.c test_spectral.c
+TESTS_C = test_func.c test_opso.c test_oqso.c test_sts_serial.c test_bytedistrib.c test_runs.c test_sums.c test_ent.c test_lz.c test_fft.c test_rank.c test_bitstream.c test_birthday.c test_dist2d.c test_spectral.c test_ks1.c
 
 # for Kolmogorov-Smirnov p-value computation
 KS_HEADERS = ../kolmogorov-smirnov/ksmirnov.h ../kolmogorov-smirnov/k1smirnov.h ../kolmogorov-smirnov/ks2.h

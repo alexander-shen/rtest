@@ -29,8 +29,6 @@
 #define BLUE 105
 #define DARKBLUE 106
 #define VIOLET 107
-#define MAGENTA 108
-#define GREY 109
 
 
 void main_graph(int argc, char* argv[]); // parent
@@ -42,6 +40,6 @@ void graph_end(); // finish drawing
 
 // data for pipe, internal
 
-int  fd[2]; // should be external to be shared between parent and child
+extern int  fd[2]; // should be external to be shared between parent and child
 #define PIPEWRITE fd[1]
 #define PIPEREAD fd[0]
