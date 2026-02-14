@@ -94,4 +94,7 @@ test_func spectral;
 //18 spectral test
 
 test_func ksone;
-//19 one-sample Kolmogorov-Smirnov test
+//19 one-sample Kolmogorov-Smirnov test\
+
+test_func monobit;
+//20 dimension = 1,  dimension =1, uses 32*param[3] bits 

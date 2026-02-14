@@ -23,7 +23,8 @@ test_function functions_list[]={
   {birthdays, "Diehard/dieharder birthday test"},
   {mindist2d, "2D minimal distance 32 int pairs test"},
   {spectral, "spectral test"},
-  {ksone, "Kolmogorov-Smirnov one sample test"}
+  {ksone, "Kolmogorov-Smirnov one sample test"},
+  {monobit, "NIST monobit test"}
 };
 
 int len_func_list=sizeof(functions_list)/sizeof(test_function);
