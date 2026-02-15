@@ -24,7 +24,8 @@ test_function functions_list[]={
   {mindist2d, "2D minimal distance 32 int pairs test"},
   {spectral, "spectral test"},
   {ksone, "Kolmogorov-Smirnov one sample test"},
-  {monobit, "NIST monobit test"}
+  {monobit, "NIST 800-22 monobit test"},
+  {nist_block, "NIST-800-22 block frequency test"}
 };
 
 int len_func_list=sizeof(functions_list)/sizeof(test_function);

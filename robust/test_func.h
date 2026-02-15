@@ -97,4 +97,7 @@ test_func ksone;
 //19 one-sample Kolmogorov-Smirnov test\
 
 test_func monobit;
-//20 dimension = 1,  dimension =1, uses 32*param[3] bits 
+//20 dimension = 1,  uses 32*param[3] bits 
+
+test_func nist_block;
+//21 dimension = 1, paran[3]=number of blocks, param[4]=block size -- NIST section 2.2, 3.2

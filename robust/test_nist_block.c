@@ -31,34 +31,45 @@ static int count_bits (unsigned u){
     return(cnt);
 }
 
-bool monobit (long double *value, unsigned long *hash, PRG gen, 
+bool nist_block (long double *value, unsigned long *hash, PRG gen, 
                  int *param, double *real_param, bool debug){
-  assert(param[2]==1); // dimension is 1
-  long int n= param[3]; // number of 32 bit integers taked from gen
-  assert(n>=1); 
-  long int num_bits = 32*n;
-  // now count 1s in 32*n bits, reading n 32-bit integers:
-  if (debug){printf("Number of ints/bits to be tested: %ld/%ld\n", n, 32*n);}
-  long i= 0; // number of integers read
-  long count_ones= 0; // number of non-zero bits in the i integers read
-  while (i!=n){
+  assert(param[2]==1); // dimension should be 1
+  long int n= param[3]; // number of blocks
+  long int m= param[4]; // each block contains m 32-integers = 32m bits
+  assert(n>=1);  assert(m>=1);
+  if (debug){printf("%ld blocks, %ld bits each\n", n, 32*m);}
+  long int num_bits = 32*m;
+  double *freqs;
+  freqs= (double *) malloc(n*sizeof(double)); // for frequencies in n blocks
+  if (freqs==NULL){fprintf(stderr,"Not enough memory\n"); exit(1);}
+  for (int i=0; i<n; i++){ // compute freqs[i]:
+    long count_ones= 0;
+    for (int j=0; j<m; j++){ // process m 32-bit unsigned integers:
      unsigned next;
      if(!g_int32_lsb(&next, gen)){return(false);}
      // next 32 bits are obtained
      count_ones += count_bits(next);
-     i++;
-     if(debug){printf("%d ones in %u in binary\n",count_bits(next),next);}   
+    } 
+    // count_ones = total number of 1s in the block
+    freqs[i]= ((double)count_ones)/(32.0 *((double)m));  
+    //freqs[i] is computed
+  } 
+  // freqs[0..n) are computed 
+  if(debug){
+    printf("Frequencies in %ld blocks:", n);
+    for (int i=0; i<n; i++){printf(" %lf", freqs[i]);}
+    printf("\n");
   }
-  int disbalance = 2*count_ones - num_bits; 
-  // = difference between number of ones and number of zeros  
-  // = sum of n independent {-1,+1} variables, mean=0, variance=num_bits
-  double normal_approx = (double) disbalance / sqrt ((double) num_bits);
-  // normal_approx has distribution close to Normal(mean=0,variance=1)
-  if(debug){printf("Normalized disbalance: %lf\n", normal_approx);}
-  double abs_normal_approx=fabs(normal_approx); // fabs for double
-  value[0]= 2.0* gsl_cdf_ugaussian_Q(abs_normal_approx);
+  long double chisquare= 0.0L;
+  for (int i=0; i<n; i++){
+    long double diff= (freqs[i]-0.5L);
+    chisquare+= diff*diff; // later multiplied as required
+  }
+  chisquare*= 128.0L*((long double) m); // 4*block size*(sum of squares)
+  value[0]= gsl_sf_gamma_inc_Q(((double)n)/2.0,((double)chisquare)/2.0);
   // return p-value, presumably uniformly distributed in [0,1]
   if (debug){printf("Presumably uniform p-value: %Lf\n", value[0]);}
+  free(freqs);
 
   // use eight more bytes for hash
   unsigned int h1, h2;

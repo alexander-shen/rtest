@@ -34,7 +34,7 @@ int comp (const void *elem1, const void *elem2){
 
 // parameters conventions:
 // param[0] number of values in the first sample (test generator)
-// param[1] number of values in the second sample (etalon generators)
+// param[1] number of values in the second sample (etalon generator)
 // func: tested function that computes value/hash given the access to a generator
 // uses param[2..] convention: param[2] is number of values produced by 
 //     the test function (the "dimension" of its output)
@@ -42,6 +42,7 @@ int comp (const void *elem1, const void *elem2){
 // (different test could measure it in different ways, so the interpretation
 // is test-dependent, and some could determine themselves how many data they
 // need and ignore this parameter)
+// param[4] additional integer parameter that may be used in the tests
 // real_param[i] are used by some tests (error bounds etc.)
 //
 bool test_p_value(long double pvalue[], // here the array of p-values 
@@ -212,7 +213,7 @@ bool test_p_value(long double pvalue[], // here the array of p-values
 } // end of test_p_value () definition
 
 // global array for parameters communicated to tests
-// TODO: real_parameters not used yet
+
 #define NUM_PARAM 10
 int int_parameters[NUM_PARAM];
 double real_parameters[NUM_PARAM];
@@ -229,7 +230,6 @@ void usageif(bool x, char* progname){
 int main(int argc, char *argv[]){
   bool ok;
   
-  // TODO: long option names (now mentioned but not implemented
   // Variables to keep option parameters
   // -x (use xoring for the etalon) [--xor]
   bool use_xor= false;
@@ -436,7 +436,7 @@ int main(int argc, char *argv[]){
   if (debug){printf("PRG generator for comparison = %d\n", compare_etalon);}
   // generators test and compare_etalon are ready
   
-  // preparing global arrays TODO: only integer parameters for now
+  // preparing global arrays 
   int_parameters[0]= n0;
   int_parameters[1]= n1;
   int_parameters[2]= dimension;

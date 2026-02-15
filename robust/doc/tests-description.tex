@@ -3,6 +3,9 @@
 
 \documentclass[12pt,a4paper,fullpage]{article}
 \usepackage{localeng}
+\usepackage{verbatim}
+\usepackage{array}
+\usepackage{longtable}
 
 \begin{document}
 
@@ -64,13 +67,15 @@ The main program (\texttt{rtest.c}, executable file \texttt{rtest}) uses the fol
 
 \item \texttt{-d dimension} indicates the number of values returned by each call to the test function (different test functions have different dimensions); this number is the number of $p$-values returned by each Kolmogorov--Smirnov two-sample test [\texttt{{-}-dimension}];
 
-\item \texttt{-n number} determines how much data should consumed by each call of the test function; the exact interpretation of this number depends on the test function; some tests ignore this value and decide themselves how many bytes they need; for some other tests only some values of this number are allowed [\texttt{{-}-ntest}];
+\item \texttt{-n number} determines how much data should be consumed by each call of the test function; the exact interpretation of this number depends on the test function; some tests ignore this value and decide themselves how many bytes they need; for some other tests only some values of this number are allowed [\texttt{{-}-ntest}];
 
-\item \texttt{-o directory\_name} asks to create files with the list of real values (provided by the test function calls) that were submitted to the Kolmogorov--Smirnov two-sample test, and tells the name of the directory where these files should be created; the directory should not exist before the call. Every Kolmogorov--Smirnov value obtained by the test is accompanied by two files in this directory (that show both samples); one could understand the behavior of the test better when looking at these files [\texttt{{-}-output}];
+\item  \texttt{-m number} modifies the behavior of some tests that use additional parameters [\texttt{{-}-modifier}];
+
+\item \texttt{-o directory\_name} asks to create files with the list of real numbers (provided by the test function calls) that were submitted to the Kolmogorov--Smirnov two-sample test, and tells the name of the directory where these files should be created; the directory should not exist before the call. Every Kolmogorov--Smirnov value obtained by the test is accompanied by two files in this directory (that show both samples); one could understand the behavior of the test better by looking at these files [\texttt{{-}-output}];
 
 \item \texttt{-r} requires the test to be repeated; if a positive number is provided as an argument, it is interpreted as the number of repetitions; zero argument means that the test should be repeated as long as there are enough data in the input files [\texttt{{-}-repetitions}];
 
-\item \texttt{-k} requires the exact computation with multi-precision integers for Kol\-mo\-go\-rov--Smir\-nov two-sample $p$-value (instead of long double computation performed by default); can be useful for very large \texttt{-p} or \texttt{-q} options (exceeding $5000$) [\texttt{{-}-ksexact}];
+\item \texttt{-k} requires the exact computation with multi-precision integers for Kol\-mo\-go\-rov--Smir\-nov two-sample $p$-value (instead of long double computation performed by default); can be useful for very large \texttt{-p} or \texttt{-q} options (say, exceeding $5000$) [\texttt{{-}-ksexact}];
 
 \item \texttt{-v} asks for additional output information (mainly for debugging purposes) [\texttt{{-}-verbose}].
 \end{itemize}
@@ -97,7 +102,7 @@ A similar test to the previous one but for $16$-bit integers (pairs of bytes), s
 
 The test depends on two parameters: the number of bits ($n$) analyzed and the maximal length of substrings analyzed ($m$). It produces an array of $3m$ values, i.e., $3$ values for each  integer from $1$ to $m$. For each integer in this range there are two values called $p_1$ and $p_2$ in the NIST document~\cite{nistsp800-22-1a}; we report also one auxiliary ``raw'' value. The value of $n$ is 32 times \texttt{-n} option; the value of $m$ is taken as \texttt{-d} option divided by $3$ (integer part). Requires $n$ bits ($n/8$ bytes, $4$ times \texttt{-n} option), the reasonable application is possible when $n\gg 2^m$ (otherwise the frequencies of factors do not make much sense). 
 
-Let $X$ be the sequence of $n$ bits to be analyzed. For each word $w$ of length at most $m$ we count the number $\textit{count}\,[w]$ of occurrences of $w$ in $X$ (considered as a cyclic word); the sum of all $\textit{count}\,[w]$ for all words $w$ of given length equals $n$. The we compute $\psi^2[k] = (2^{k}/n)\sum_w (\textit{count}\,[w])^2 - n$ where the sum is taken over all strings $w$ of length $k$.
+Let $X$ be the sequence of $n$ bits to be analyzed. For each word $w$ of length at most $m$ we compute the number $\textit{count}\,[w]$ of occurrences of $w$ in $X$ (considered as a cyclic word); the sum of all $\textit{count}\,[w]$ for all words $w$ of given length equals $n$. The we compute $\psi^2[k] = (2^{k}/n)\sum_w (\textit{count}\,[w])^2 - n$ where the sum is taken over all strings $w$ of length $k$.
  
 For our purposes the values $\psi^2[k]$ (raw values mentioned above) can be used directly, but NIST
  recommends to consider the first and second differences
@@ -117,11 +122,11 @@ More details:  the NIST description is inconsistent: formula 2-28~(5) does not i
 
 \item[4] \texttt{opso [test\_opso.c]}
 
-See~\cite{marsaglia-zaman} for the original description. (The \texttt{dieharder} implemenation deviates from the original description in a rather strange ways; we followed the original description.) The test consumes $2^{21}+1$ unsigned $32$-bit integers and generates $32-10+1=23$ values according to $23$ possible positions of $10$-bit substrings in a $32$-bit string. For each of $23$ positions we get a word of length $n=2^{21}+1$ in $2^{10}$-letter alphabet. We count $2$-letter words that are \emph{not} factors of this word, and convert this count to a  (presumably uniform) $p$-value assuming normal distribution with some parameters (mean about 141909.33 and $\sigma$ about $290.46$). The \texttt{-n} parameter should be $2097153$ (${}=2^{21}+1$), the \texttt{-d} parameter should be $23$. Uses about $8$ Mbytes per test value.
+See~\cite{marsaglia-zaman} for the original description. (The \texttt{dieharder} implemenation deviates from the original description in a rather strange ways, see \cite[Section 7.1]{shen-romashchenko-robust}; we followed the original description.) The test consumes $2^{21}+1$ unsigned $32$-bit integers and generates $32-10+1=23$ values according to $23$ possible positions of $10$-bit substrings in a $32$-bit string. For each of $23$ positions we get a word of length $n=2^{21}+1$ in $2^{10}$-letter alphabet. We count $2$-letter words that are \emph{not} factors of this word, and convert this count to a  (presumably uniform) $p$-value assuming normal distribution with some parameters (mean about 141909.33 and $\sigma$ about $290.46$). The \texttt{-n} parameter should be $2097153$ (${}=2^{21}+1$), the \texttt{-d} parameter should be $23$. Uses about $8$ Mbytes per test value.
 
 \item[5] \texttt{oqso [test\_oqso.c]}
 
-The test is similar to \texttt{opso} and is described in the same paper. (Again the \texttt{dieharder} implementation does something rather different.) The difference is that the alphabet contains $2^5$ letters (factors of length $5$ at different positions in the input integers), and we count factors of length $4$ that are missing. Consumes $2^{21}+3$ integers and produces $28$ values. Approximation mean and variance are slightly different ($141909.60$ and $294.656$). The \texttt{-n} parameter should be $2097155$ (${}=2^{21}+3$), the \texttt{-d} parameter should be $28$. Uses about $8$ Mbytes per test value.
+The test is similar to \texttt{opso} and is described in the same paper. (Again the \texttt{dieharder} implementation does something rather different,  see \cite[Section 7.1]{shen-romashchenko-robust}) The difference is that the alphabet contains $2^5$ letters (factors of length $5$ at different positions in the input integers), and we count factors of length $4$ that are missing. Consumes $2^{21}+3$ integers and produces $28$ values. Approximation mean and variance are slightly different ($141909.60$ and $294.656$). The \texttt{-n} parameter should be $2097155$ (${}=2^{21}+3$), the \texttt{-d} parameter should be $28$. Uses about $8$ Mbytes per test value.
 
 \item[6] \texttt{bytedistribs [test\_bytedistribs.c]}
 
@@ -145,7 +150,7 @@ This simple test of dimension $4$ takes arbitrary number $n$ of $32$-bit integer
 
 \item[10] \texttt{fftest [test\_fft.c]}
 
-This is a Fourier transform (spectral) test from NIST, as described in~\cite{nistsp800-22-1a}. This description includes corrections from~\cite{kim-umeno-hasegawa}. In this test $n$ integers from the generator are converted into $32n$ bit sequence; this sequence is interpreted as array of $\pm 1$, and discrete Fourier transform is applied. We assume that $n$ is a power of $2$, so the simple algorithm for Fourier transform can be used (taken from \texttt{gsl}, GNU scientific library). In this way we get $n$ complex numbers (since we start with real numbers, only $n/2$ first number are used). We see how many of then have absolute value that exceeds some threshold (namely, $\sqrt{\ln(1/0.05)n}$), the description in NIST document claims that expected value of this number is $0.05n/2$, and the distribution is close to binomial distribution for $n/2$ independent experiments with $0.05$ probability. No derivation for this approximation is given (not to speak about error bounds). It seems that this approximation is quite rough. Figure~\ref{pic:fft-approx} shows the experimental distributions for comparison of some random number generator and its xor with reference generator. One can see that both curves are quite close to each other and quite far from the diagonal (that should appear for uniform distributions). The jumps happen since there are only a few values of the test statistics (the number of values exceeding the thresholds). Let us stress again that the approximation errors do not destroy the validity of test results when using two-sample robust tests.
+This is a Fourier transform (spectral) test from NIST, as described in~\cite{nistsp800-22-1a}. This description includes corrections from~\cite{kim-umeno-hasegawa}. In this test $n$ integers from the generator are converted into $32n$ bit sequence; this sequence is interpreted as array of $\pm 1$, and discrete Fourier transform is applied. We assume that $n$ is a power of $2$, so the simple algorithm for Fourier transform can be used (taken from \texttt{gsl}, GNU scientific library). In this way we get $n$ complex numbers (since we start with real numbers, only $n/2$ first number are used). We see how many of then have absolute value that exceeds some threshold (namely, $\sqrt{\ln(1/0.05)n}$), the description in NIST document claims that expected value of this number is $0.05n/2$, and the distribution is close to binomial distribution for $n/2$ independent experiments with $0.05$ probability. No derivation for this approximation is given (not to speak about error bounds). It seems that this approximation is quite rough. Figure~\ref{pic:fft-approx} (left) shows the experimental distributions for comparison of some random number generator and its xor with reference generator. One can see that both curves are quite close to each other and quite far from the diagonal (that should appear for uniform distributions). The jumps happen since there are only a few values of the test statistics (the number of values exceeding the thresholds). One could compare the curve with Figure~\ref{pic:fft-approx} (right): for a bad generator the difference between two curves is much bigger.
 \begin{figure}[t]
 \begin{center}
 \includegraphics[width=0.4\textwidth]{pdfs/fft-approx.pdf}\qquad
@@ -154,6 +159,7 @@ This is a Fourier transform (spectral) test from NIST, as described in~\cite{nis
 \caption{\emph{Left}: the distributions of presumably uniform random variables obtained by Fourier transform test, command \texttt{rtest -x -f a10bis.raw -e ../bitbabbler/raw\_4\_sources -p 1000 -q 1000 -n 256 -t 10 -d 1  -o outfft}. \emph{Right}: a visible difference between test and etalon samples for some bad generator.}
 \label{pic:fft-approx}
 \end{figure}
+Let us stress again that the approximation errors do not destroy the validity of test results when using two-sample robust tests.
 
 Test dimension is $1$, uses $4\times \texttt{[-n]}$ bytes; the \texttt{-n} parameter should be a power of $2$.
 
@@ -164,7 +170,7 @@ This and the following tests (both are implemented in \texttt{test\_rank.c}) che
 
 \item{12} \texttt{rank6x8 [test\_rank.c]}
 
-This test has dimension $25$ (since there are $32-8+1=25$ possible position of a $8$-bit factor in a $32$-bit word). It takes $6\times\texttt{[-n]}$ integers; for each group of $6$ integers it form $25$ matrices $6\times 8$ corresponding to $25$ positions. Ranks are computed, and for each position a distribution of matrices according to ranks ($6$, $5$, [$4$ or less]) is analyzed via $\chi^2$ statistics and transformed into a presumably uniform variable (separately for each position). This follows \texttt{diehard} and \texttt{dieharder} with some corrections, see the discussion in Section~\ref{sec:dieharder-notes}. Uses $24\times\texttt{[-n]}$ bytes.
+This test has dimension $25$ (since there are $32-8+1=25$ possible position of a $8$-bit factor in a $32$-bit word). It takes $6\times\texttt{[-n]}$ integers; for each group of $6$ integers it form $25$ matrices $6\times 8$ corresponding to $25$ positions. Ranks are computed, and for each position a distribution of matrices according to ranks ($6$, $5$, [$4$ or less]) is analyzed via $\chi^2$ statistics and transformed into a presumably uniform variable (separately for each position). This follows \texttt{diehard} and \texttt{dieharder} with some corrections, see the discussion in \cite[Section 7.1]{shen-romashchenko-robust}. Uses $24\times\texttt{[-n]}$ bytes.
 
 \item{13} \texttt{bitstream\_o [test\_bitstream.c]}
 
@@ -188,7 +194,7 @@ Lempel--Ziv test as it was described in the original version of~\cite{nistsp800-
 
 \item{16} \texttt{birthdays [test\_birthday.c]}
 
-A ``year'' consists of $2^{24}$ days; we choose $1024$ random days (``birthdays'') and compute $1024$ intervals between birthdays. Some intervals may coincide, and we count the number of coincidences (i.e., the difference between $1024$ and the number of different intervals). We repeat this experiment several times  (\texttt{-n} option) and compare the resulting distribution with presumed approximation (Poisson distribution with $\lambda=16$), getting one $p$-value that is considered as the output of the test. More precisely, we use first $24$ bits from the $32$-bit integers from the input sequence; this gives us one $p$-value, than next $24$ bits from the same $32$-bit integers, and so on ($32$ cyclic shifts, as described --- but not implemented --- in \texttt{dieharder}). The test dimension is $32$, and it uses $1024$ times [\texttt{-n} option] integers ($4096\times \texttt{[-n]}$ bytes) for each set of $32$ values. Note that the test is robust (as any other two-sample test) but its usefulness is not clear (due to the systematic deviation of the observed distribution from the presumed one, see Section~\ref{sec:dieharder-notes}, Figure~\ref{pic:birthdays}).
+A ``year'' consists of $2^{24}$ days; we choose $1024$ random days (``birthdays'') and compute $1024$ intervals between birthdays. Some intervals may coincide, and we count the number of coincidences (i.e., the difference between $1024$ and the number of different intervals). We repeat this experiment several times  (\texttt{-n} option) and compare the resulting distribution with presumed approximation (Poisson distribution with $\lambda=16$), getting one $p$-value that is considered as the output of the test. More precisely, we use first $24$ bits from the $32$-bit integers from the input sequence; this gives us one $p$-value, than next $24$ bits from the same $32$-bit integers, and so on ($32$ cyclic shifts, as described --- but not implemented --- in \texttt{dieharder}). The test dimension is $32$, and it uses $1024$ times [\texttt{-n} option] integers ($4096\times \texttt{[-n]}$ bytes) for each set of $32$ values. Note that the test is robust (as any other two-sample test) but its usefulness is not clear (due to the systematic deviation of the observed distribution from the presumed one, see Section~\cite[Section 7.1, Figure~7.2]{shen-romashchenko-robust}).
 
 \item{17} \texttt{mindist2d [test\_dist2d.c, minimal\_distance.hpp]}
 
@@ -206,7 +212,14 @@ There is also a standalone version of these tests (described shortly in the next
 
 \item{19} \texttt{ks1 [test\_ks1.c,../kolmogorov-smirnov/ks1smirnov.\{c,h\}] }
 
-This is a Kolmogorov--Smirnov test with one sample; see \url{https://www.jstatsoft.org/article/view/v008i18} for details. The test takes \texttt{-n} $32$-bit integers $x_1,\ldots,x_n$ (longer sample requires more memory just to keep all the numbers while sorting) and considers $x_i/2^{32}$ as a sample from uniform distribution on $[0,1]$. Then we find the maximal deviation of the empirical cumulative distribution function from the theoretical one to find (approximate) $p$-value using Kolmogorov--Smirnov approximation. (For testing one can use directly the deviation, so the computation of the approximate $p$-value is redundant, but it may be useful for more detailed investigation.) 
+This is a Kolmogorov--Smirnov test with one sample; see \url{https://www.jstatsoft.org/article/view/v008i18} for details. The test takes \texttt{-n} $32$-bit integers $x_1,\ldots,x_n$ and considers $x_i/2^{32}$ as a sample from uniform distribution on $[0,1]$. Then we find the maximal deviation of the empirical cumulative distribution function from the theoretical one to find (approximate) $p$-value using Kolmogorov--Smirnov approximation. (For testing one can use directly the deviation, so the computation of the approximate $p$-value is redundant, but it may be useful for more detailed investigation.) 
+
+\item{20} \texttt{monobit [test\_monobit.c]}
+
+This test (implementing NIST frequency (monobit) test, \cite[Section 2.1]{nistsp800-22-1a}) considers the input as a sequence of bits. It reads $32n$ bits where $n$ is the parameter in \texttt{-n} option (constant $32$ is chosen for better alignment), and computes the number $m$ of ones among the bits read. The deviation $s=|2m-n|/\sqrt{n}$ is computed, and the p-value that corresponds to the normal approximation (of the absolute value) is returned. (Again for testing one could use directly the number of ones without taking absolute value and conversion to p-values, but we followed NIST and it can be useful for sanity checks.)
+
+\item{21} \texttt{nist\_block} [test\_nist\_block.c]
+This test (implementing NIST frequency block test, \cite[Section 2.2]{nistsp800-22-1a}) considers the input as a sequence of bits. The input sequence is divided into $n\ge1$ blocks (where $n$ is the value of \texttt{-n} option) of length $32m$ (where $m\ge 1$ is the value of \texttt{-m} option). Then the frequencies of ones $p_1,\ldots,p_n$ and the sum $s=\sum_i (p_i-1/2)^2$ are computed. This sum is then converted to (approximate) $p$-value as described in \cite[Section 2.2]{nistsp800-22-1a}: $p=\textit{igamc}\,(n/2,4\cdot 32m\cdot s/2)$.
 
 \end{description}
 
@@ -227,6 +240,188 @@ A short reminder to be taken into account when interpreting the test values:
 \item The recommended approach when discrediting some generator: make some preliminary experiments to determine which tests look more suspicious. Then try the selected test on the fresh input from the generator and report the $p$-value obtained for this test. But be careful if a small $p$-value appears after several attempts to discredit the generator: a honest researcher should multiply the resulting $p$-value by the number of attempts.
 
 \end{itemize}
+
+\section{Comparison with other test suites}
+
+\begin{longtable}{|c|>{\raggedright\arraybackslash}p{3cm}|l|>{\raggedright\arraybackslash}p{4cm}|}
+% --- 1. Header for the very first page ---
+%\caption{My Multi-page Table} \label{tab:my_table} \\
+\hline
+\textbf{Source} & \textbf{Test name} & \texttt{rtest}  & Comments\\
+\hline
+\endfirsthead
+
+% --- 2. Header for all subsequent pages ---
+\hline
+\textbf{Source} & \textbf{Testname} & \texttt{rtest} & Comments\\
+\hline
+\endhead
+
+% --- 3. Footer for pages that aren't the last ---
+\hline
+\multicolumn{4}{|r|}{{Continued on next page...}} \\
+\hline
+\endfoot
+
+% --- 4. Footer for the very last page ---
+\hline
+\endlastfoot
+
+% --- 5. Your actual data goes here ---
+Diehard & Birthday spacing & \texttt{-t 16}& see comments above \\ \hline
+Diehard & Overlapping 5-per\-mu\-tat\-ions (OPERM5)& &\\ \hline
+Diehard & Binary rank $31\times 31$ & &\\ \hline
+Diehard & Binary rank $32\times 32$&  \texttt{-t 11}&\\ \hline
+Diehard & Binary rank $6\times 8$& \texttt{-t 12}  &\\ \hline
+Diehard & Bitstream & \texttt{-t 13}, \texttt{-t 14}& overlap / non-overlap version\\ \hline
+Diehard & OPSO & \texttt{-t 4} & Overlapping Pairs Sparse Occurence \\ \hline
+Diehard & OQSO & \texttt{-t 5} & Overlapping Quadruples Sparse Occurence\\ \hline
+Diehard & DNA & &  \\ \hline
+Diehard & Count the $1$s  in a stream of bytes& & \\ \hline
+Diehard & Count the $1$s for specific bytes & & \\ \hline
+Diehard & Parking lot & & \\ \hline
+Diehard & Minimum distance (2D) & \texttt{-t 17} & see comments above \\\hline
+Diehard & 3D spheres & & \\ \hline
+Diehard & Squeeze & &  \\ \hline
+Diehard & Overlapping sums & \texttt{-t 8} & included even if Dieharder does not recommend it (no problem for robust version)\\ \hline
+Diehard & Runs & \texttt{-t 6}& follows description in Knuth vol. 2\\ \hline
+Diehard & Craps & & \\ \hline
+\hline
+%%%%%
+Dieharder & Birthdays & \texttt{-t 16}& see comments above\\ \hline %  -d 0
+Dieharder & Overlapping permutations (OPERM5)& &  \\ \hline % -d 1
+Dieharder & $32\times32$ binary rank& \texttt{-t 11} & \\ \hline %  -d 2
+Dieharder & $6\times 8$ binary rank&  \texttt{-t 12}&\\ \hline %  -d 3
+Dieharder & Bitstream & \texttt{-t 13}, \texttt{-t 14} &overlap / non-overlap version\\ \hline %  -d 4
+Dieharder & OPSO &  \texttt{-t 4} $*$ & Overlapping Pairs Sparse Occurence \par $*$with some changes, see above\\\hline %  -d 5
+Dieharder & OQSO & \texttt{-t 5} $*$ & Overlapping Quadruples Sparse Occurence \par $*$with some changes, see above\\ \hline %  -d 6
+Dieharder & DNA & & \\ \hline %  -d 7
+Dieharder & Count the $1$s  in a stream of bytes & & \\ \hline %  -d 8
+Dieharder & Count the $1$s (byte) & &\\ \hline %  -d Dieharder & & & \\ \hline %  -d 9 
+Dieharder & Parking lot  & &\\ \hline %  -d Dieharder & & & \\ \hline %  -d 10
+Dieharder &  Minimum distance (2D)& \texttt{-t 18} & see comments above\\ \hline %  -d 11
+Dieharder &  3D spheres & &\\ \hline %  -d 12
+Dieharder &  Squeeze & &\\ \hline %  -d 13
+Dieharder &  Overlapping sums&\texttt{-t 8} & included even if Dieharder does not recommend it (no problem for robust version)\\ \hline % -d 14
+Dieharder &  Runs &\texttt{-t 6} & follows description in Knuth v.2 (while Dieharder deviates slightly) \\ \hline%  -d 15
+Dieharder &  Craps & &\\ \hline %  -d 16
+Dieharder &  Marsaglia and Tsang GCD& &\\ \hline %  -d 18
+%Dieharder &  Marsaglia and Tsang Gorilla& &\\ \hline %  -d 19 is not in the dieharder -l list, not implemented?
+Dieharder &  STS monobit & \texttt{-t 20}&\\ \hline %    -d 100
+Dieharder & STS runs& & \\ \hline %  -d 101
+Dieharder & STS serial (generalized)& & \\ \hline %  -d 102
+Dieharder & RGB bit distribution& & \\ \hline %  -d 200 
+Dieharder & RGB generalized minimum distance& & \\ \hline %  -d 201  
+Dieharder & RGB permutations & & \\ \hline %  -d 202
+Dieharder & RGB lagged sum& & \\ \hline %  -d 203
+Dieharder & RGB Kolmogorov-Smirnov& & \\ \hline %  -d 204
+Dieharder & DAB Byte Distribution& \texttt{-t 6}& \\ \hline %  -d 205
+Dieharder & DAB DCT& & \\ \hline %  -d 206
+Dieharder & DAB fill tree& & \\ \hline %  -d 207
+Dieharder & DAB fill tree 2& & \\ \hline %  -d 208
+Dieharder & DAB monobit 2& & \\ \hline %  -d 209
+
+% in the list_tests.c there are  other options and also written (in the old list_test())
+%%         (do not use the following as tests yet)\n\
+%%   [dev: -r 7 RGB L-M-Ntuple Distribution test suite (quite long)]\n\
+%%   [dev: -r 8 RGB Overlapping Permutations test]\n\
+%%   [rft: -r 9 RGB KStest test]\n\
+\hline
+
+%%%%%%% NIST (STS-2.1.2)
+NIST (STS)&Frequency & \texttt{-t 20}& \\ \hline %  STS 01
+NIST (STS)&Block frequency&\texttt{-t 21}  &\\ \hline %  STS02 
+NIST (STS)&Cumulative sums & & \\ \hline %  STS03
+NIST (STS)&Runs & & \\ \hline %  STS04
+NIST (STS)&Longest run of ones & & \\ \hline %  STS05 
+NIST (STS)&Rank & & \\ \hline %  STS06 
+NIST (STS)&Discrete Fourier transform &\texttt{-t 10} & includes later corrections (see above)\\ \hline %  STS07 
+NIST (STS)&Nonperiodic template matching& & \\ \hline %  STS08
+NIST (STS)&Overlapping template matching& & \\ \hline %  STS09
+NIST (STS)&Universal statistical & & \\ \hline %  STS10 (Maurer) 
+NIST (STS)&Approximate entropy & & \\ \hline %  STS11
+NIST (STS)&Random excursions & & \\ \hline %  STS12
+NIST (STS)&Random excursions variant & & \\ \hline %  STS13 
+NIST (STS)&Serial & \texttt{-t 2} & \\ \hline %  STS14 
+NIST (STS)&Linear complexity & & \\ \hline % STS15
+
+
+\hline
+\iffalse
+%%%%%%%
+TestU01 & scomp\_LinearComp& & \\ \hline % 
+TestU01 & scomp\_LempelZiv& & \\ \hline % 
+%
+TestU01 & sentrop\_EntropyDiscOver& & \\ \hline % 
+TestU01 & sentrop\_EntropyDiscOver2& & \\ \hline % 
+%
+TestU01 & sknuth\_Collision& & \\ \hline %
+TestU01 & sknuth\_CollisionPermut & &\\ \hline %  \
+TestU01 & sknuth\_CouponCollector& & \\ \hline %  
+TestU01 & sknuth\_Gap& & \\ \hline %  
+TestU01 & sknuth\_MaxOft& & \\ \hline %  
+TestU01 & sknuth\_Permutation & &\\ \hline %  
+TestU01 & sknuth\_Run & &\\ \hline %
+TestU01 & sknuth\_RunIndep & &\\ \hline %
+TestU01 & sknuth\_Serial & &\\ \hline %
+TestU01 & sknuth\_SerialSparse & &\\ \hline %
+TestU01 & sknuth\_SimpPoker& & \\ \hline %  
+%
+TestU01 & smarsa\_BirthdaySpacings& & \\ \hline % 
+TestU01 & smarsa\_CAT& & \\ \hline % 
+TestU01 & smarsa\_CATBits& & \\ \hline % 
+TestU01 & smarsa\_CollisionOver & &\\ \hline % 
+TestU01 & smarsa\_GCD& & \\ \hline % 
+TestU01 & smarsa\_MatrixRank & &\\ \hline %  
+TestU01 & smarsa\_Opso & &\\ \hline %  
+TestU01 & smarsa\_Savir2& & \\ \hline % 
+TestU01 & smarsa\_SerialOver & &\\ \hline %  
+%
+TestU01 & smultin\_Multinomial& & \\ \hline % 
+TestU01 & smultin\_MultinomialBits& & \\ \hline % 
+TestU01 & smultin\_MultinomialOver& & \\ \hline % 
+TestU01 & smultin\_MultinomialBitsOver& & \\ \hline % 
+%
+TestU01 & snpair\_BickelBreiman & \\ \hline %
+TestU01 & snpair\_ClosePairs & \\ \hline %  
+TestU01 & snpair\_ClosePairsBitMatch & \\ \hline %   
+TestU01 & snpair\_DistanceCP& & \\ \hline % 
+%
+TestU01 & sspacings\_AllSpacings& & \\ \hline % 
+TestU01 & sspacings\_AllSpacings2& & \\ \hline % 
+TestU01 & sspacings\_ScanSpacings& & \\ \hline % 
+TestU01 & sspacings\_SumLogsSpacings& & \\ \hline % 
+TestU01 & sspacings\_SumSquaresSpacings& & \\ \hline % 
+%
+TestU01 & sspectral\_Fourier1& & \\ \hline % 
+TestU02 & sspectral\_Fourier1& & \\ \hline % 
+TestU01 & sspectral\_Fourier3& & \\ \hline % 
+%
+TestU01 & sstring\_AutoCor& & \\ \hline % 
+TestU01 & sstring\_HamminCorr& & \\ \hline % 
+TestU01 & sstring\_HammingIndep & &\\ \hline % 
+TestU01 & sstring\_HammingWeight& & \\ \hline % 
+TestU01 & sstring\_HammingWeight2& & \\ \hline % 
+TestU01 & sstring\_LongestHeadRun& & \\ \hline % 
+TestU01 & sstring\_PeriodsInStrings& & \\ \hline %  
+TestU01 & sstring\_Run& & \\ \hline % 
+%
+TestU01 & svaria\_AppearanceSpacings & &\\ \hline %  
+TestU01 & svaria\_CollisionArgMax& & \\ \hline %  
+TestU01 & svaria\_SampleCorr &  &\\ \hline %  
+TestU01 & svaria\_SampleMean &  &\\ \hline %  
+TestU01 & svaria\_SampleProd & & \\ \hline %  
+TestU01 & svaria\_SumCollector& & \\ \hline %  
+TestU01 & svaria\_SumLogs& & \\ \hline %  
+TestU01 & svaria\_WeightDistrib& & \\ \hline %  
+%
+TestU01 & swalk\_RandomWalk1 & &\\ \hline % 
+TestU01 & swalk\_RandomWalk1a & &\\ \hline %   
+TestU01 & swalk\_VarGeoN& &\\ \hline %   
+TestU01 & swalk\_VarGeoP& &\\ \hline %   
+ \fi  
+\end{longtable}
+
 
 \section{Spectral tests}
 
@@ -316,15 +511,28 @@ Yann Ollivier,  \emph{Spectral gap of a graph}, a public domain code for finding
 \bibitem{shen-robust}
 Alexander Shen, \emph{Making randomness tests more robust}, HAL archive, 2018, \url{https://hal.archives-ouvertes.fr/hal-01707610}.
 
+\bibitem{shen-romashchenko-robust}
+Andrei Romashchenko, Alexander Shen, \emph{Randomness tests: theory and practice}, HAL archive, 2021, 
+\url{https://hal-lirmm.ccsd.cnrs.fr/lirmm-03371151v1/document}
 
 \end{thebibliography}
+\appendix
+
+\section{Diehard test descriptions}
+
+The diehard documentation desrcibes tests as follows:
+\small
+\verbatiminput{diehard-tests.txt}
 
 
+\section{Implementation remarks}
 
-\end{document}
-Implementation remarks: the main driver file is \texttt{rtest.c}; the definitions for the test functions are given in \texttt{test\_func.c} and additional files (see the macro \texttt{TESTS\_C} in the \texttt{Makefile}). To add a new test function, one should put its code in a \texttt{.c} file, put its forward definition in \texttt{test\_func.h} and add it to the list of all test functions in \texttt{test\_func.c}. Some tests use \texttt{c++} code (see the \texttt{Makefile}). 
+The main driver file is \texttt{rtest.c}; the definitions for the test functions are given in \texttt{test\_func.c} and additional files (see the macro \texttt{TESTS\_C} in the \texttt{Makefile}). To add a new test function, one should put its code in a \texttt{.c} file, put its forward definition in \texttt{test\_func.h} and add it to the list of all test functions in \texttt{test\_func.c}. Some tests use \texttt{c++} code (see the \texttt{Makefile}). 
 
 We used hashes in a different way to simplify the code structure: the function returns not only some values (the number of returned values is the dimension), but also returns $64$ bits (two $32-bit$ integers) that are used to resolve the ties: if the test function returns two identical values, these hash values are compared for sorting. Normally $64$ bits should be enough to resolve the ties (if this does not happen, this means that the file we are testing is not random enough, so it creates a failure by itself).
 
 The tools to compute the Kolmogorov--Smirnov $p$-values (for two samples; some tests also use calls to Kolmogorov--Smirnov distribution function for one sample) are taken from another directory (see \texttt{KS\_C} macro definition in \texttt{Makefile}).
+
+\end{document}
+
 
