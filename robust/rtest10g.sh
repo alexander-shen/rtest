@@ -10,14 +10,14 @@ time rtest -x -f $1 -e $2 -p 1000 -q 1000 -n 40000 -t 6 -d 1 -r 1 >> $1.test10g
 # 6
 echo all_bytes: > $1.test10g
 echo all_bytes:
-echo rtest -x -f $1 -e $2 -p 5000 -q5000 -n 1 -t 0 -d 1 -r 100 >> $1.test10g
-time rtest -x -f $1 -e $2 -p 5000 -q5000 -n 1 -t 0 -d 1 -r 100 >> $1.test10g
+echo rtest -x -f $1 -e $2 -p 5000 -q5000 -n 1 -t 1 -d 1 -r 100 >> $1.test10g
+time rtest -x -f $1 -e $2 -p 5000 -q5000 -n 1 -t 1 -d 1 -r 100 >> $1.test10g
 
 # 20
 echo all_16 >> $1.test10g
 echo all_16 
-echo rtest -x -f $1 -e $2 -p 3000 -q 3000 -n 1 -t 1 -d 1 -r 1 >> $1.test10g
-time rtest -x -f $1 -e $2 -p 3000 -q 3000 -n 1 -t 1 -d 1 -r 1 >> $1.test10g
+echo rtest -x -f $1 -e $2 -p 3000 -q 3000 -n 1 -t 2 -d 1 -r 1 >> $1.test10g
+time rtest -x -f $1 -e $2 -p 3000 -q 3000 -n 1 -t 2 -d 1 -r 1 >> $1.test10g
 
 # 15
 echo >> $1.test10g

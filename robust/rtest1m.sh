@@ -1,13 +1,13 @@
 #!/bin/sh
 
 echo all_bytes: > $1.tst1m
-echo rtest -x -f $1 -e $2 -p 250 -q250 -n 1 -t 0 -d 1 -r 1 >> $1.tst1m
-rtest -x -f $1 -e $2 -p 250 -q250 -n 1 -t 0 -d 1 -r 1 >> $1.tst1m
+echo rtest -x -f $1 -e $2 -p 250 -q250 -n 1 -t 1 -d 1 -r 1 >> $1.tst1m
+rtest -x -f $1 -e $2 -p 250 -q250 -n 1 -t 1 -d 1 -r 1 >> $1.tst1m
 
 # not enough values for 1 Mb, even for one test
 # echo all_16
-# echo rtest -x -f $1 -e $2 -p 1 -q 1 -n 1 -t 1 -d 1 -r 1 -v >> $1.tst1m
-# rtest -x -f $1 -e $2 -p 1 -q 1 -n 1 -t 1 -d 1 -r 1 -v >> $1.tst1m
+# echo rtest -x -f $1 -e $2 -p 1 -q 1 -n 1 -t 2 -d 1 -r 1 -v >> $1.tst1m
+# rtest -x -f $1 -e $2 -p 1 -q 1 -n 1 -t 2 -d 1 -r 1 -v >> $1.tst1m
 
 echo >> $1.tst1m
 echo sts_serial: >> $1.tst1m

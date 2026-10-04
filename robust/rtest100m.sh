@@ -2,13 +2,13 @@
 
 # 4s
 echo all_bytes: > $1.test100m
-echo rtest -x -f $1 -e $2 -p 5000 -q5000 -n 1 -t 0 -d 1 -r 5 >> $1.test100m
-time rtest -x -f $1 -e $2 -p 5000 -q5000 -n 1 -t 0 -d 1 -r 5 >> $1.test100m
+echo rtest -x -f $1 -e $2 -p 5000 -q5000 -n 1 -t 1 -d 1 -r 5 >> $1.test100m
+time rtest -x -f $1 -e $2 -p 5000 -q5000 -n 1 -t 1 -d 1 -r 5 >> $1.test100m
 
 # 2s
 echo all_16 >> $1.test100m
-echo rtest -x -f $1 -e $2 -p 20 -q 20 -n 1 -t 1 -d 1 -r 1 >> $1.test100m
-time rtest -x -f $1 -e $2 -p 20 -q 20 -n 1 -t 1 -d 1 -r 1 >> $1.test100m
+echo rtest -x -f $1 -e $2 -p 20 -q 20 -n 1 -t 2 -d 1 -r 1 >> $1.test100m
+time rtest -x -f $1 -e $2 -p 20 -q 20 -n 1 -t 2 -d 1 -r 1 >> $1.test100m
 
 # 5s 8s
 echo >> $1.test100m

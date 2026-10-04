@@ -4,9 +4,9 @@
 
 // Here one should provide references to all test functions and their short descriptions
 test_function functions_list[]={
-  {all_bytes,"Number of readings before all 256 bytes appear"},
-  {all_16,"Number of reading before all 65536 16-but strings appear"},
-  {dummy_dimension, "Test function for debugging purposes"},
+  {dummy_dimension, "Test function for debugging purposes"}, // CHANGED! moved here to be more clear, was list[2]
+  {all_bytes,"Number of readings before all 256 bytes appear"}, // CHANGED was list[0]
+  {all_16,"Number of reading before all 65536 16-but strings appear"}, // CHANGED was list[1]
   {sts_serial, "Serial test according to NIST 800-22"},
   {opso, "dieharder_opso test according to Marsaglia description"},
   {oqso, "dieharder_oqso test according to Marsaglia description"},

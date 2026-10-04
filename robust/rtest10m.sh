@@ -1,13 +1,13 @@
 #!/bin/sh
 
 echo all_bytes: > $1.test10m
-echo rtest -x -f $1 -e $2 -p 2500 -q2500 -n 1 -t 0 -d 1 -r 1 >> $1.test10m
-rtest -x -f $1 -e $2 -p 2500 -q2500 -n 1 -t 0 -d 1 -r 1 >> $1.test10m
+echo rtest -x -f $1 -e $2 -p 2500 -q2500 -n 1 -t 1 -d 1 -r 1 >> $1.test10m
+rtest -x -f $1 -e $2 -p 2500 -q2500 -n 1 -t 1 -d 1 -r 1 >> $1.test10m
 
 # nor really useful with 2+2 experiments
-echo all_16 >> $1.test10m
-echo rtest -x -f $1 -e $2 -p 2 -q 2 -n 1 -t 1 -d 1 -r 1 >> $1.test10m
-rtest -x -f $1 -e $2 -p 2 -q 2 -n 1 -t 1 -d 1 -r 1 >> $1.test10m
+# echo all_16 >> $1.test10m
+# echo rtest -x -f $1 -e $2 -p 2 -q 2 -n 1 -t 2 -d 1 -r 1 >> $1.test10m
+# rtest -x -f $1 -e $2 -p 2 -q 2 -n 1 -t 2 -d 1 -r 1 >> $1.test10m
 
 echo >> $1.test10m
 echo sts_serial: >> $1.test10m
